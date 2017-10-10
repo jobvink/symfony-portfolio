@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Competence;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Competence controller.
@@ -44,6 +46,21 @@ class CompetenceController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // $file slaat de geuploadde afbeelding op
+            /** @var UploadedFile $file */
+            $file = $competence->getLogo();
+
+            // genereer een unique naam voor het bestand voor het opgeslagen wordt
+            $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+
+            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
+            $file->move(
+                $this->getParameter('competence_logo_directory'),
+                $fileName
+            );
+
+            $competence->setLogo($fileName);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($competence);
             $em->flush();
