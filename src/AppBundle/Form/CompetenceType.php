@@ -17,7 +17,10 @@ class CompetenceType extends AbstractType
         $builder
             ->add('name')
             ->add('description')
-            ->add('logo', FileType::class, array('label' => 'Logo van de competentie'));
+            ->add('logo', FileType::class, [
+                'label' => 'Logo van de competentie',
+                'data_class' => null
+            ]);
     }
     
     /**

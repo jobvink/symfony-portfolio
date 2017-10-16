@@ -5,6 +5,7 @@
 
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}
+    <img src="{{ asset('uploads/competences/' ~ competence.logo) }}" alt="Logo">
         <input type="submit" value="Edit" />
     {{ form_end(edit_form) }}
 

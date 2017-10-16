@@ -51,7 +51,7 @@ class CompetenceController extends Controller
             $file = $competence->getLogo();
 
             // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
 
             // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
             $file->move(
@@ -95,11 +95,15 @@ class CompetenceController extends Controller
      *
      * @Route("/{id}/edit", name="competence_edit")
      * @Method({"GET", "POST"})
+     * @param Request $request
+     * @param Competence $competence
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editAction(Request $request, Competence $competence)
     {
         $deleteForm = $this->createDeleteForm($competence);
-        $editForm = $this->createForm('AppBundle\Form\CompetenceType', $competence);
+        $editForm = $this->createForm('AppBundle\Form\CompetenceType', $competence, [
+        ]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
