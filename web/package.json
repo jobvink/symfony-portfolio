@@ -1,0 +1,15 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Het portfolio van Job Vink gemaakt met gehulp van het symfony framework.",
+  "main": "index.js",
+  "dependencies": {
+    "semantic-ui": "^2.2.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Job Vink",
+  "license": "ISC"
+}
