@@ -1,41 +1,8 @@
-{% extends 'base.html.twig' %}
-
-{% block body %}
-    <h1>Competence</h1>
-
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ competence.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ competence.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ competence.description }}</td>
-            </tr>
-            <tr>
-                <th>Logo</th>
-                <td>{{ competence.logo }}</td>
-                <td><img src="{{ asset('') }}" alt=""></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('competence_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('competence_edit', { 'id': competence.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
-{% endblock %}
+<div class="col-12 col-md-6 col-lg-4 top-buffer">
+    <span class="competenties-circle">
+        <img src="{{ asset('uploads/competences/' ~ competence.logo) }}"
+             alt="{{ competence.name }}">
+    </span>
+    <h4 class="service-heading">{{ competence.name }}</h4>
+    <p class="text-muted">{{ competence.description }}</p>
+</div>

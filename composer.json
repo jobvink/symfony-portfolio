@@ -46,7 +46,7 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget",
             "npm --prefix ./web install",
-            "gulp --gulpfile ./web/semantic/gulpfile.js build"
+            "gulp --gulpfile ./web/gulpfile.js sass"
         ],
         "post-install-cmd": [
             "@symfony-scripts"
