@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Tijdlijn</h2>
+                    <h3 class="section-subheading text-muted">Een overzicht van mijn werkervaring.</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="timeline">
+                        {% set iter = 0 %}
+                        {% for timeline in timelines %}
+                            <li {% if iter % 2 == 0 %}class="timeline-inverted"{% endif %}>
+                                <div class="timeline-image">
+                                    <img class="img-circle img-responsive"
+                                         src="{{ asset('img/Rolling.gif') }}"
+                                         data-src="{{ asset('uploads/timeline/' ~ timeline.logo) }}"
+                                         alt="{{ timeline.logo }}">
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                        <h4>{{ timeline.beginDate|date('Y-m-d') }}
+                                            - {{ timeline.endDate|date('Y-m-d') }}</h4>
+                                        <h4 class="subheading">{{ timeline.employer }} - {{ timeline.function }}</h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p class="text-muted">
+                                            {{ timeline.description }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </li>
+                            {% set iter = iter + 1 %}
+                            {#<?php iter++ ?>#}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

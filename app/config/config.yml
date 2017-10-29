@@ -8,6 +8,9 @@ imports:
 parameters:
     locale: en
     competence_logo_directory: '%kernel.project_dir%/web/uploads/competences/'
+    timeline_logo_directory: '%kernel.project_dir%/web/uploads/timeline/'
+    portfolio_logo_directory: '%kernel.project_dir%/web/uploads/portfolio/'
+    items_directory: '%kernel.project_dir%/web/uploads/portfolio/items/'
 
 framework:
     #esi: ~

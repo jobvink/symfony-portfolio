@@ -18,3 +18,4 @@
 .idea
 /web/uploads/
 /web/node_modules/
+.DS_Store

@@ -13,13 +13,21 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getRepository('AppBundle:Competence');
-        $competences = $em->findAll();
+        $competenceRepository = $this->getDoctrine()->getRepository('AppBundle:Competence');
+        $competences = $competenceRepository->findAll();
+        $timelineRepository = $this->getDoctrine()->getRepository('AppBundle:Timeline');
+        $timelines = $timelineRepository->findAll();
+        $portfolioRepository = $this->getDoctrine()->getRepository('AppBundle:Portfolio');
+        $portfolios = $portfolioRepository->findAll();
+
+
 
         // replace this example code with whatever you need
         return $this->render(':default:portfolio.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-            'competences' => $competences
+            'competences' => $competences,
+            'timelines' => $timelines,
+            'portfolios' => $portfolios
         ]);
     }
 }

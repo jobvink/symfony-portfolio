@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Modalitem</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ modalItem.id }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ modalItem.type }}</td>
+            </tr>
+            <tr>
+                <th>Body</th>
+                <td>{{ modalItem.body }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ modalItem.name }}</td>
+            </tr>
+            <tr>
+                <th>Attachment</th>
+                <td>{{ modalItem.attachment }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('modalitem_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('modalitem_edit', { 'id': modalItem.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

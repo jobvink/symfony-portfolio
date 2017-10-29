@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Modalitems list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Type</th>
+                <th>Body</th>
+                <th>Name</th>
+                <th>Attachment</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for modalItem in modalItems %}
+            <tr>
+                <td><a href="{{ path('modalitem_show', { 'id': modalItem.id }) }}">{{ modalItem.id }}</a></td>
+                <td>{{ modalItem.type }}</td>
+                <td>{{ modalItem.body }}</td>
+                <td>{{ modalItem.name }}</td>
+                <td>{{ modalItem.attachment }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('modalitem_show', { 'id': modalItem.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('modalitem_edit', { 'id': modalItem.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('modalitem_new') }}">Create a new modalItem</a>
+        </li>
+    </ul>
+{% endblock %}
