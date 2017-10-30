@@ -71,7 +71,7 @@
             css.forEach(function (t) {
                 $replacement.css(t,$obj.css(t));
             });
-            $replacement.width($obj.width());
+            $replacement.width($obj.width()+5);
             $replacement.height($replacement.height()+5);
             $replacement.keypress(function (key) {
                 var that = $(this);

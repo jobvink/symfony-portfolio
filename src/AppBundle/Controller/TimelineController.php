@@ -7,12 +7,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Timeline controller.
  *
- * @Route("timeline")
+ * @Route("admin/timeline")
  */
 class TimelineController extends Controller
 {
@@ -102,6 +103,25 @@ class TimelineController extends Controller
         $deleteForm = $this->createDeleteForm($timeline);
         $editForm = $this->createForm('AppBundle\Form\TimelineType', $timeline);
         $editForm->handleRequest($request);
+
+        if (!is_null($request->get('type'))) {
+            $type = $request->get('type');
+            $data = $request->get('data');
+            switch ($type){
+                case 'employer':
+                    $timeline->setEmployer($data);
+                    break;
+                case 'function':
+                    $timeline->setFunction($data);
+                    break;
+                case 'description':
+                    $timeline->setDescription($data);
+                    break;
+                default:
+            }
+            $this->getDoctrine()->getManager()->flush();
+            return new JsonResponse(['success'=>true,'data'=>$data,'timeline'=>$timeline,'type'=>$type]);
+        }
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
