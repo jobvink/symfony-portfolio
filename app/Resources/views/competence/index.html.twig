@@ -20,14 +20,14 @@
                                  alt="{{ competence.name }}">
                         </span>
                         <h4
-                                {% if user is defined %}
+                                {% if editor %}
                                     {% set id = competence.name|replace(' ', '_') %}
                                     onclick="edit('{{ id }}', 'name', '{{ path('competence_edit', {'id':competence.id}) }}')"
                                     id="{{ id }}"
                                 {% endif %}
                                 class="service-heading">{{ competence.name }}</h4>
                         <p
-                                {% if user is defined %}
+                                {% if editor %}
                                     {% spaceless %}
                                         onclick="edit('{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}', 'description', '{{ path('competence_edit', {'id':competence.id}) }}')"
                                         id="{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}"

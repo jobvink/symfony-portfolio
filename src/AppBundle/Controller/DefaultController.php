@@ -20,6 +20,7 @@ class DefaultController extends Controller
         $portfolioRepository = $this->getDoctrine()->getRepository('AppBundle:Portfolio');
         $portfolios = $portfolioRepository->findAll();
 
+        $editor = $this->isGranted('ROLE_ADMIN');
 
 
         // replace this example code with whatever you need
@@ -28,6 +29,7 @@ class DefaultController extends Controller
             'competences' => $competences,
             'timelines' => $timelines,
             'portfolios' => $portfolios,
+            'editor' => $editor,
             'user' => $this->getUser()
         ]);
     }

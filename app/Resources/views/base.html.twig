@@ -19,11 +19,11 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}"/>
 </head>
 <body>
-{% if user is defined and user is not null %}
+{% if editor %}
 <div id="edit">
     {% endif %}
     {% block body %}{% endblock %}
-    {% if user is defined and user is not null %}
+    {% if editor %}
 </div>
 {% endif %}
 {% block javascripts %}
