@@ -27,32 +27,24 @@
                                             - {{ timeline.endDate|date('Y-m-d') }}</h4>
                                         <div class="subheading">
                                             {% if editor %}
-                                            <h5
-                                                    {% set id = 'employer_' ~ timeline.employer|replace(' ', '_') %}
-                                                    onclick="edit('{{ id }}', 'employer', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
-                                                    id="{{ id }}"
-                                            >{{ timeline.employer }}</h5>
-                                                <span>
-                                                &nbsp;-&nbsp;
-                                            </span>
-                                            <h5
-                                                    {% set id = 'function_' ~ timeline.employer|replace(' ', '_') %}
-                                                    onclick="edit('{{ id }}', 'function', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
-                                                    id="{{ id }}"
-                                            >{{ timeline.function }}</h5>
+                                                <h5 {% set id = 'employer_' ~ timeline.employer|replace(' ', '_') %}
+                                                        onclick="edit('{{ id }}', 'employer', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
+                                                        id="{{ id }}">{{ timeline.employer }}</h5>
+                                                <span>&nbsp;-&nbsp;</span>
+                                                <h5 {% set id = 'function_' ~ timeline.employer|replace(' ', '_') %}
+                                                        onclick="edit('{{ id }}', 'function', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
+                                                        id="{{ id }}">{{ timeline.function }}</h5>
                                             {% else %}
-                                            <h5>{{ timeline.employer }} - {{ timeline.function }}</h5>
+                                                <h5>{{ timeline.employer }} - {{ timeline.function }}</h5>
                                             {% endif %}
                                         </div>
                                     </div>
                                     <div class="timeline-body">
-                                        <p
-                                                {% if editor %}
-                                                    {% set id = 'description_' ~ timeline.employer|replace(' ', '_') %}
-                                                    onclick="edit('{{ id }}', 'name', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
-                                                    id="{{ id }}"
-                                                {% endif %}
-                                                class="text-muted">{{ timeline.description }}</p>
+                                        <p {% if editor %}
+                                            {% set id = 'description_' ~ timeline.employer|replace(' ', '_') %}
+                                            onclick="edit('{{ id }}', 'name', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
+                                            id="{{ id }}"
+                                        {% endif %} class="text-muted">{{ timeline.description }}</p>
                                     </div>
                                 </div>
                             </li>
