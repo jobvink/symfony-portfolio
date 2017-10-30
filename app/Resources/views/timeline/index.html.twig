@@ -23,8 +23,8 @@
                                 </div>
                                 <div class="timeline-panel">
                                     <div class="timeline-heading">
-                                        <h4>{{ timeline.beginDate|date('Y-m-d') }}
-                                            - {{ timeline.endDate|date('Y-m-d') }}</h4>
+                                        <h4>{{ timeline.beginDate|localdate('nl', 'F Y') }}{% if timeline.endDate is not null %}
+                                            - {{ timeline.endDate|localdate('nl', 'F Y') }}{% endif %}</h4>
                                         <div class="subheading">
                                             {% if editor %}
                                                 <h5 {% set id = 'employer_' ~ timeline.employer|replace(' ', '_') %}
