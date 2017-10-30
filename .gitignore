@@ -19,3 +19,11 @@
 /web/uploads/
 /web/node_modules/
 .DS_Store
+
+#jmcvink.nl
+.htpasswd/
+awstats/
+logs/
+private_html
+public_html_backup/
+stats/

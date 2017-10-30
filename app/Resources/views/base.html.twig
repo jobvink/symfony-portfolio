@@ -1,58 +1,114 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport"
-              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('bundles/css/style.css') }}">
-            <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-            <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
-            <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet'
-                  type='text/css'>
-            <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
-        {% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}
-            <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
-            <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-            <script src="{{ asset('js/agency.min.js') }}"></script>
-            <script src="{{ asset('js/jquery.easing.min.js') }}"></script>
-            <!-- Lazy load -->
-            <script>
-                var loadImage = function (img) {
-                    var pos = img.getBoundingClientRect(),
-                        src = img.getAttribute('data-src');
-                    window.addEventListener('scroll', function loadImageWhenVisible() {
-                        // noinspection CommaExpressionJS
-                        return window.scrollY >= (pos.top - window.innerHeight * 2) ? (
-                            img.src = src,
-                                window.removeEventListener('scroll', loadImageWhenVisible)
-                        ) : false;
-                    });
-                };
-                $.each($("img[data-src]"), function (i, img) {
-                    loadImage(img);
-                })
-            </script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/css/style.css') }}">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet'
+              type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet'
+              type='text/css'>
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}"/>
+</head>
+<body>
+{% if user is defined and user is not null %}
+<div id="edit">
+    {% endif %}
+    {% block body %}{% endblock %}
+    {% if user is defined and user is not null %}
+</div>
+{% endif %}
+{% block javascripts %}
+    <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/agency.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.easing.min.js') }}"></script>
+    <!-- Lazy load -->
+    <script>
+        var loadImage = function (img) {
+            var pos = img.getBoundingClientRect(),
+                src = img.getAttribute('data-src');
+            function loadImageWhenVisible() {
+                // noinspection CommaExpressionJS
+                return window.scrollY >= (pos.top - window.innerHeight * 2) ? (
+                    img.src = src,
+                        window.removeEventListener('scroll', loadImageWhenVisible)
+                ) : false;
+            }
+            window.addEventListener('scroll', loadImageWhenVisible);
+            loadImageWhenVisible();
+        };
+        $.each($("img[data-src]"), function (i, img) {
+            loadImage(img);
+        })
+    </script>
+    <script>
 
-            <!-- google analytics -->
-            <!--suppress CommaExpressionJS -->
-            <script>
-                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        function edit(id, type, url) {
+            var css = ['font-family','font-size','font-weight','font-style','color',
+                'text-transform','text-decoration','letter-spacing','word-spacing',
+                'line-height','text-align','vertical-align','direction','background-color',
+                'background-image','background-repeat','background-position',
+                'background-attachment','opacity','width','height','top','right','bottom',
+                'left', 'margin', 'margin-top','margin-right','margin-bottom','margin-left',
+                'padding-top','padding-right','padding-bottom','padding-left', 'position',
+                'display','visibility','z-index','overflow-x','overflow-y','white-space',
+                'clip','float','clear','cursor','list-style-image','list-style-position',
+                'list-style-type','marker-offset'];
+            var $obj = $('#' + id);
+            var $replacement = $('<textarea>');
+            $replacement.html($obj.html());
+            $replacement.attr('id', id);
+            $replacement.attr('class', $obj.attr('class'));
+            css.forEach(function (t) {
+                $replacement.css(t,$obj.css(t));
+            });
+            $replacement.width($obj.width());
+            $replacement.height($replacement.height()+5);
+            $replacement.keypress(function (key) {
+                var that = $(this);
+                if (key.key === "Enter") {
+                    console.log(that);
+                    that.replaceWith('<'+$obj.get(0).tagName+' onclick="edit(\'' + that.attr('id') + '\',\''+url+'\')" id="' + that.attr('id') + '" class="' + that.attr('class') + '">'+that.val()+'<'+$obj.get(0).tagName+'/>');
+                    var data = {
+                        type: type,
+                        data: $replacement.val()
+                    };
+                    $.post(url, data, function (res) {
+                        console.log(res);
+                    },'json');
+                }
+            });
+            $obj.replaceWith($replacement);
+        }
+    </script>
 
-                ga('create', 'UA-103564665-1', 'auto');
-                ga('send', 'pageview');
-            </script>
-        {% endblock %}
-    </body>
+    <!-- google analytics -->
+    <!--suppress CommaExpressionJS -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-103564665-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+{% endblock %}
+</body>
 </html>

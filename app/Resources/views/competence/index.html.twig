@@ -1,23 +1,43 @@
-<section id="services">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <h2 class="section-heading">Competenties</h2>
-                <h3 class="section-subheading text-muted">Hieronder staan alle skills en vaardigheden die ik heb, en
-                    alle technieken waar ik mee heb gewerkt.</h3>
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <section id="services">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">Competenties</h2>
+                    <h3 class="section-subheading text-muted">Hieronder staan alle skills en vaardigheden die ik heb, en
+                        alle technieken waar ik mee heb gewerkt.</h3>
+                </div>
             </div>
-        </div>
-        <div class="row text-center">
-            {% for competence in competences %}
-                <div class="col-12 col-md-6 col-lg-4 top-buffer">
+            <div class="row text-center">
+                {% for competence in competences %}
+                    <div class="col-12 col-md-6 col-lg-4 top-buffer">
                         <span class="competenties-circle">
-                            <img src="{{ asset('img/Rolling.gif') }}" data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
+                            <img src="{{ asset('img/Rolling.gif') }}"
+                                 data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
                                  alt="{{ competence.name }}">
                         </span>
-                    <h4 class="service-heading">{{ competence.name }}</h4>
-                    <p class="text-muted">{{ competence.description }}</p>
-                </div>
-            {% endfor %}
+                        <h4
+                                {% if user is defined %}
+                                    {% set id = competence.name|replace(' ', '_') %}
+                                    onclick="edit('{{ id }}', 'name', '{{ path('competence_edit', {'id':competence.id}) }}')"
+                                    id="{{ id }}"
+                                {% endif %}
+                                class="service-heading">{{ competence.name }}</h4>
+                        <p
+                                {% if user is defined %}
+                                    {% spaceless %}
+                                        onclick="edit('{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}', 'description', '{{ path('competence_edit', {'id':competence.id}) }}')"
+                                        id="{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}"
+                                    {% endspaceless %}
+                                {% endif %}
+                                class="text-muted">{{ competence.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+
+{% endblock %}

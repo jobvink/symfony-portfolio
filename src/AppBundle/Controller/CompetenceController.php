@@ -7,12 +7,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Competence controller.
  *
- * @Route("competence")
+ * @Route("admin/competence")
  */
 class CompetenceController extends Controller
 {
@@ -30,6 +31,7 @@ class CompetenceController extends Controller
 
         return $this->render('competence/index.html.twig', array(
             'competences' => $competences,
+            'user' => $this->getUser()
         ));
     }
 
@@ -106,7 +108,37 @@ class CompetenceController extends Controller
         ]);
         $editForm->handleRequest($request);
 
+        if (!is_null($request->get('type'))) {
+            $type = $request->get('type');
+            $data = $request->get('data');
+            switch ($type){
+                case 'name':
+                    $competence->setName($data);
+                    break;
+                case 'description':
+                    $competence->setDescription($data);
+                    break;
+                default:
+            }
+            $this->getDoctrine()->getManager()->flush();
+            return new JsonResponse(['success'=>true,'data'=>$data,'competence'=>$competence,'type'=>$type]);
+        }
+
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            // $file slaat de geuploadde afbeelding op
+            /** @var UploadedFile $file */
+            $file = $competence->getLogo();
+
+            // genereer een unique naam voor het bestand voor het opgeslagen wordt
+            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
+
+            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
+            $file->move(
+                $this->getParameter('competence_logo_directory'),
+                $fileName
+            );
+
+            $competence->setLogo($fileName);
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('competence_edit', array('id' => $competence->getId()));
