@@ -76,18 +76,25 @@
             $replacement.keypress(function (key) {
                 var that = $(this);
                 if (key.key === "Enter") {
-                    console.log(that);
-                    that.replaceWith('<'+$obj.get(0).tagName+' onclick="edit(\'' + that.attr('id') + '\',\''+url+'\')" id="' + that.attr('id') + '" class="' + that.attr('class') + '">'+that.val()+'<'+$obj.get(0).tagName+'/>');
-                    var data = {
-                        type: type,
-                        data: $replacement.val()
-                    };
-                    $.post(url, data, function (res) {
-                        console.log(res);
-                    },'json');
+                    submit($obj, that, url, type);
+                }
+            });
+            $(document).on('click', function (e) {
+                if (e.target.id !== $replacement.attr('id')) {
+                    submit($obj, $replacement, url, type);
                 }
             });
             $obj.replaceWith($replacement);
+        }
+        function submit(base, context, url, type) {
+            context.replaceWith('<'+base.get(0).tagName+' onclick="edit(\'' + context.attr('id') + '\',\''+url+'\')" id="' + context.attr('id') + '" class="' + context.attr('class') + '">'+context.val()+'<'+base.get(0).tagName+'/>');
+            var data = {
+                type: type,
+                data: context.val()
+            };
+            $.post(url, data, function (res) {
+                console.log(res);
+            },'json');
         }
     </script>
 

@@ -1,8 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
 <div class="col-12 col-md-6 col-lg-4 top-buffer">
-    <span class="competenties-circle">
-        <img src="{{ asset('uploads/competences/' ~ competence.logo) }}"
-             alt="{{ competence.name }}">
-    </span>
-    <h4 class="service-heading">{{ competence.name }}</h4>
-    <p class="text-muted">{{ competence.description }}</p>
+                        <span class="competenties-circle">
+                            <img src="{{ asset('img/Rolling.gif') }}"
+                                 data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
+                                 alt="{{ competence.name }}">
+                        </span>
+    <h4
+            {% if editor %}
+                {% set id = competence.name|replace(' ', '_') %}
+                onclick="edit('{{ id }}', 'name', '{{ path('competence_edit', {'id':competence.id}) }}')"
+                id="{{ id }}"
+            {% endif %}
+            class="service-heading">{{ competence.name }}</h4>
+    <p
+            {% if editor %}
+                {% spaceless %}
+                    onclick="edit('{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}', 'description', '{{ path('competence_edit', {'id':competence.id}) }}')"
+                    id="{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}"
+                {% endspaceless %}
+            {% endif %}
+            class="text-muted">{{ competence.description }}</p>
 </div>
+
+{% endblock %}

@@ -70,7 +70,7 @@ class CompetenceController extends Controller
             return $this->redirectToRoute('competence_show', array('id' => $competence->getId()));
         }
 
-        return $this->render('competence/new.html.twig', array(
+        return $this->render('competence/competence.html.twig', array(
             'competence' => $competence,
             'form' => $form->createView(),
         ));
@@ -144,7 +144,7 @@ class CompetenceController extends Controller
             return $this->redirectToRoute('competence_edit', array('id' => $competence->getId()));
         }
 
-        return $this->render('competence/edit.html.twig', array(
+        return $this->render('competence/competence.html.twig', array(
             'competence' => $competence,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),

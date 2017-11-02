@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
     <section id="services">
         <div class="container">
             <div class="row">
@@ -13,31 +12,9 @@
             </div>
             <div class="row text-center">
                 {% for competence in competences %}
-                    <div class="col-12 col-md-6 col-lg-4 top-buffer">
-                        <span class="competenties-circle">
-                            <img src="{{ asset('img/Rolling.gif') }}"
-                                 data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
-                                 alt="{{ competence.name }}">
-                        </span>
-                        <h4
-                                {% if editor %}
-                                    {% set id = competence.name|replace(' ', '_') %}
-                                    onclick="edit('{{ id }}', 'name', '{{ path('competence_edit', {'id':competence.id}) }}')"
-                                    id="{{ id }}"
-                                {% endif %}
-                                class="service-heading">{{ competence.name }}</h4>
-                        <p
-                                {% if editor %}
-                                    {% spaceless %}
-                                        onclick="edit('{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}', 'description', '{{ path('competence_edit', {'id':competence.id}) }}')"
-                                        id="{{ 'competence_description_' ~ competence.name|replace(' ', '_') }}"
-                                    {% endspaceless %}
-                                {% endif %}
-                                class="text-muted">{{ competence.description }}</p>
-                    </div>
+                    {% include ':competence:show.html.twig' %}
                 {% endfor %}
             </div>
         </div>
     </section>
-
 {% endblock %}
