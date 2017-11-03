@@ -1,22 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Competence edit</h1>
-
-    {{ form_start(edit_form) }}
-    {{ form_widget(edit_form) }}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
     <img src="{{ asset('uploads/competences/' ~ competence.logo) }}" alt="Logo">
-    <input type="submit" value="Edit" />
-    {{ form_end(edit_form) }}
+    <input type="submit" value="Save"/>
+    {{ form_end(form) }}
 
     <ul>
         <li>
             <a href="{{ path('competence_index') }}">Back to the list</a>
         </li>
-        <li>
-            {{ form_start(delete_form) }}
-            <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
+        {% if delete_form is defined %}
+            <li>
+                {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </li>
+        {% endif %}
     </ul>
 {% endblock %}

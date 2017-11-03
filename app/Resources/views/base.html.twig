@@ -19,6 +19,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}"/>
 </head>
 <body>
+{% set editor = editor ?? false %}
 {% if editor %}
 <div id="edit">
     {% endif %}

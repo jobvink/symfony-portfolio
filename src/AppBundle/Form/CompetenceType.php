@@ -15,12 +15,12 @@ class CompetenceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
-            ->add('description')
             ->add('logo', FileType::class, [
                 'label' => 'Logo van de competentie',
                 'data_class' => null
-            ]);
+            ])
+            ->add('name')
+            ->add('description');
     }
     
     /**

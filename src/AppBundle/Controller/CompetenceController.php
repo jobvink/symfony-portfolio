@@ -146,7 +146,7 @@ class CompetenceController extends Controller
 
         return $this->render('competence/competence.html.twig', array(
             'competence' => $competence,
-            'edit_form' => $editForm->createView(),
+            'form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
     }
