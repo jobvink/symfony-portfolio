@@ -70,7 +70,7 @@ class TimelineController extends Controller
             return $this->redirectToRoute('timeline_show', array('id' => $timeline->getId()));
         }
 
-        return $this->render('timeline/new.html.twig', array(
+        return $this->render('timeline/timeline.html.twig', array(
             'timeline' => $timeline,
             'form' => $form->createView(),
         ));
@@ -129,7 +129,7 @@ class TimelineController extends Controller
             return $this->redirectToRoute('timeline_edit', array('id' => $timeline->getId()));
         }
 
-        return $this->render('timeline/edit.html.twig', array(
+        return $this->render('timeline/timeline.html.twig', array(
             'timeline' => $timeline,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),

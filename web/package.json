@@ -6,14 +6,17 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "fontawesome": "^4.7.2",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-sass": "^3.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "babel": "babel --presets es2015 javascript/main.jsx -o bundles/js/main.js --source-maps",
+    "watch": "babel-watch javascripts/main.jsx"
   },
   "author": "Job Vink",
   "license": "ISC"

@@ -1,4 +1,5 @@
-{% extends 'base.html.twig' %}
+{% set standalone = standalone ?? false %}
+{% extends standalone ? 'base.html.twig' : 'null.html.twig' %}
 
 {% block body %}
     <section id="about">
@@ -14,42 +15,8 @@
                     <ul class="timeline">
                         {% set iter = 0 %}
                         {% for timeline in timelines %}
-                            <li {% if iter % 2 == 0 %}class="timeline-inverted"{% endif %}>
-                                <div class="timeline-image">
-                                    <img class="img-circle img-responsive"
-                                         src="{{ asset('img/Rolling.gif') }}"
-                                         data-src="{{ asset('uploads/timeline/' ~ timeline.logo) }}"
-                                         alt="{{ timeline.logo }}">
-                                </div>
-                                <div class="timeline-panel">
-                                    <div class="timeline-heading">
-                                        <h4>{{ timeline.beginDate|localdate('nl', 'F Y') }}{% if timeline.endDate is not null %}
-                                            - {{ timeline.endDate|localdate('nl', 'F Y') }}{% endif %}</h4>
-                                        <div class="subheading">
-                                            {% if editor %}
-                                                <h5 {% set id = 'employer_' ~ timeline.employer|replace(' ', '_') %}
-                                                        onclick="edit('{{ id }}', 'employer', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
-                                                        id="{{ id }}">{{ timeline.employer }}</h5>
-                                                <span>&nbsp;-&nbsp;</span>
-                                                <h5 {% set id = 'function_' ~ timeline.employer|replace(' ', '_') %}
-                                                        onclick="edit('{{ id }}', 'function', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
-                                                        id="{{ id }}">{{ timeline.function }}</h5>
-                                            {% else %}
-                                                <h5>{{ timeline.employer }} - {{ timeline.function }}</h5>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="timeline-body">
-                                        <p {% if editor %}
-                                            {% set id = 'description_' ~ timeline.employer|replace(' ', '_') %}
-                                            onclick="edit('{{ id }}', 'name', '{{ path('timeline_edit', {'id':timeline.id}) }}')"
-                                            id="{{ id }}"
-                                        {% endif %} class="text-muted">{{ timeline.description }}</p>
-                                    </div>
-                                </div>
-                            </li>
+                            {% include ':timeline:show.html.twig' %}
                             {% set iter = iter + 1 %}
-                            {#<?php iter++ ?>#}
                         {% endfor %}
                     </ul>
                 </div>

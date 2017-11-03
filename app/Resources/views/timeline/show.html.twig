@@ -1,52 +1,40 @@
-{% extends 'base.html.twig' %}
+{% set standalone = standalone ?? false %}
+{% extends standalone ? 'base.html.twig' : 'null.html.twig' %}
 
 {% block body %}
-    <h1>Timeline</h1>
-
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ timeline.id }}</td>
-            </tr>
-            <tr>
-                <th>Logo</th>
-                <td>{{ timeline.logo }}</td>
-            </tr>
-            <tr>
-                <th>Begindate</th>
-                <td>{% if timeline.beginDate %}{{ timeline.beginDate|date('Y-m-d') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Enddate</th>
-                <td>{% if timeline.endDate %}{{ timeline.endDate|date('Y-m-d') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Employer</th>
-                <td>{{ timeline.employer }}</td>
-            </tr>
-            <tr>
-                <th>Function</th>
-                <td>{{ timeline.function }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ timeline.description }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('timeline_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('timeline_edit', { 'id': timeline.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+    <li {% if iter is defined and iter % 2 == 0 %}class="timeline-inverted"{% endif %}>
+        <div class="timeline-image">
+            <img class="img-circle img-responsive"
+                 src="{{ asset('img/Rolling.gif') }}"
+                 data-src="{{ asset('uploads/timeline/' ~ timeline.logo) }}"
+                 alt="{{ timeline.logo }}">
+        </div>
+        <div class="timeline-panel">
+            <div class="timeline-heading">
+                <h4>{{ timeline.beginDate|localdate('nl', 'F Y') }}{% if timeline.endDate is not null %}
+                        - {{ timeline.endDate|localdate('nl', 'F Y') }}{% endif %}</h4>
+                <div class="subheading">
+                    {% if editor %}
+                        <h5 data-type="employer"
+                            data-path="{{ path('timeline_edit', {'id':timeline.id}) }}"
+                            class="editable"
+                        >{{ timeline.employer }}</h5>
+                        <span>&nbsp;-&nbsp;</span>
+                        <h5 data-type="employer"
+                            data-path="{{ path('timeline_edit', {'id':timeline.id}) }}"
+                            class="editable"
+                        >{{ timeline.function }}</h5>
+                    {% else %}
+                        <h5>{{ timeline.employer }} - {{ timeline.function }}</h5>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="timeline-body">
+                <p {% if editor %}
+                        data-type="description"
+                        data-path="{{ path('timeline_edit', {'id':timeline.id}) }}"
+                {% endif %} class="text-muted{{ editor ? ' editable' }}">{{ timeline.description }}</p>
+            </div>
+        </div>
+    </li>
 {% endblock %}

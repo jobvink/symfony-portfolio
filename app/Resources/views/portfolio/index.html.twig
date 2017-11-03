@@ -1,4 +1,5 @@
-{% extends 'base.html.twig' %}
+{% set standalone = standalone ?? false %}
+{% extends standalone ? 'base.html.twig' : 'null.html.twig' %}
 
 {% block body %}
     <section id="portfolio" class="bg-light-gray">

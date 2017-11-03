@@ -27,3 +27,5 @@ logs/
 private_html
 public_html_backup/
 stats/
+node_modules/
+npm-debug.log

@@ -32,72 +32,10 @@
     <script src="{{ asset('js/agency.min.js') }}"></script>
     <script src="{{ asset('js/jquery.easing.min.js') }}"></script>
     <!-- Lazy load -->
+    <script src="http://wzrd.in/standalone/uuid%2Fv4@latest"></script>
     <script>
-        var loadImage = function (img) {
-            var pos = img.getBoundingClientRect(),
-                src = img.getAttribute('data-src');
-            function loadImageWhenVisible() {
-                // noinspection CommaExpressionJS
-                return window.scrollY >= (pos.top - window.innerHeight * 2) ? (
-                    img.src = src,
-                        window.removeEventListener('scroll', loadImageWhenVisible)
-                ) : false;
-            }
-            window.addEventListener('scroll', loadImageWhenVisible);
-            loadImageWhenVisible();
-        };
-        $.each($("img[data-src]"), function (i, img) {
-            loadImage(img);
-        })
-    </script>
-    <script>
-
-        function edit(id, type, url) {
-            var css = ['font-family','font-size','font-weight','font-style','color',
-                'text-transform','text-decoration','letter-spacing','word-spacing',
-                'line-height','text-align','vertical-align','direction','background-color',
-                'background-image','background-repeat','background-position',
-                'background-attachment','opacity','width','height','top','right','bottom',
-                'left', 'margin', 'margin-top','margin-right','margin-bottom','margin-left',
-                'padding-top','padding-right','padding-bottom','padding-left', 'position',
-                'display','visibility','z-index','overflow-x','overflow-y','white-space',
-                'clip','float','clear','cursor','list-style-image','list-style-position',
-                'list-style-type','marker-offset'];
-            var $obj = $('#' + id);
-            var $replacement = $('<textarea>');
-            $replacement.html($obj.html());
-            $replacement.attr('id', id);
-            $replacement.attr('class', $obj.attr('class'));
-            css.forEach(function (t) {
-                $replacement.css(t,$obj.css(t));
-            });
-            $replacement.width($obj.width()+5);
-            $replacement.height($replacement.height()+5);
-            $replacement.keypress(function (key) {
-                var that = $(this);
-                if (key.key === "Enter") {
-                    submit($obj, that, url, type);
-                }
-            });
-            $(document).on('click', function (e) {
-                if (e.target.id !== $replacement.attr('id')) {
-                    submit($obj, $replacement, url, type);
-                }
-            });
-            $obj.replaceWith($replacement);
-        }
-        function submit(base, context, url, type) {
-            context.replaceWith('<'+base.get(0).tagName+' onclick="edit(\'' + context.attr('id') + '\',\''+url+'\')" id="' + context.attr('id') + '" class="' + context.attr('class') + '">'+context.val()+'<'+base.get(0).tagName+'/>');
-            var data = {
-                type: type,
-                data: context.val()
-            };
-            $.post(url, data, function (res) {
-                console.log(res);
-            },'json');
-        }
-    </script>
-
+        uuidv4(); // -> v4 UUID
+    </script>     <script src="{{ asset('javascript/main.js') }}"></script>
     <!-- google analytics -->
     <!--suppress CommaExpressionJS -->
     <script>
