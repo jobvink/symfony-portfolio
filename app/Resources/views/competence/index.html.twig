@@ -19,7 +19,9 @@
                     {% include ':competence:show.html.twig' %}
                     {% set iter = iter + 1 %}
                 {% endfor %}
-                {% include 'competence/competence.html.twig' %}
+                {% if editor %}
+                    {% include 'competence/competence.html.twig' %}
+                {% endif %}
             </div>
         </div>
     </section>

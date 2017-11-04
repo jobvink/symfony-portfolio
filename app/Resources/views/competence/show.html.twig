@@ -4,7 +4,9 @@
 {% block body %}
 
     <div class="col-12 col-md-6 col-lg-4 top-buffer competenties-item">
-        <input type="file" id="logo_input_{{ iter }}" style="display: none;">
+        {% if editor %}
+            <input type="file" id="logo_input_{{ iter }}" style="display: none;">
+        {% endif %}
         <span class="competenties-circle edit-image"
               data-img="logo_{{ iter }}"
               data-input="logo_input_{{ iter }}"
@@ -22,9 +24,11 @@
             data-type="description"
             data-path="{{ path('competence_edit', {'id':competence.id}) }}"
         {% endif %} class="text-muted{{ editor ? ' editable' }}">{{ competence.description }}</p>
+        {% if editor %}
         {{ form_start(delete) }}
         <input type="submit" value="Remove">
         {{ form_end(delete) }}
+            {% endif %}
     </div>
 
 {% endblock %}
