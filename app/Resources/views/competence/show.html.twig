@@ -4,31 +4,22 @@
 {% block body %}
 
     <div class="col-12 col-md-6 col-lg-4 top-buffer competenties-item">
-        {% if editor %}
-            <input type="file" id="logo_input_{{ iter }}" style="display: none;">
-        {% endif %}
         <span class="competenties-circle edit-image"
-              data-img="logo_{{ iter }}"
-              data-input="logo_input_{{ iter }}"
-              data-path="{{ path('competence_edit', {'id':competence.id}) }}">
-            <img id="logo_{{ iter }}"
-                 src="{{ asset('img/Rolling.gif') }}"
+              data-img="logo_{{ iter }}" data-input="logo_input_{{ iter }}"
+              data-path="competence_path_{{ iter }}">
+            <img id="logo_{{ iter }}" src="{{ asset('img/Rolling.gif') }}"
                  data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
                  alt="{{ competence.name }}">
         </span>
-        <h4 {% if editor %}
-            data-type="name"
-            data-path="{{ path('competence_edit', {'id':competence.id}) }}"
-        {% endif %} class="service-heading{{ editor ? ' editable' }}">{{ competence.name }}</h4>
-        <p {% if editor %}
-            data-type="description"
-            data-path="{{ path('competence_edit', {'id':competence.id}) }}"
+        <h4 {% if editor %} data-type="name" data-path="competence_path_{{ iter }}"{% endif %}
+                class="service-heading{{ editor ? ' editable' }}">{{ competence.name }}</h4>
+        <p {% if editor %} data-type="description" data-path="competence_path_{{ iter }}"
         {% endif %} class="text-muted{{ editor ? ' editable' }}">{{ competence.description }}</p>
         {% if editor %}
-        {{ form_start(delete) }}
-        <input type="submit" value="Remove">
-        {{ form_end(delete) }}
-            {% endif %}
+            {{ form_start(delete) }}<input type="submit" value="Remove">{{ form_end(delete) }}
+            <div id="competence_path_{{ iter }}" class="hidden" data-path="{{ path('competence_edit', {'id':competence.id}) }}"></div>
+            <input type="file" id="logo_input_{{ iter }}" class="hidden">
+        {% endif %}
     </div>
 
 {% endblock %}

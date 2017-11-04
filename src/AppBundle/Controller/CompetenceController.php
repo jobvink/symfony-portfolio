@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Debug\Exception\ContextErrorException;
+use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,48 +26,19 @@ class CompetenceController extends Controller
      *
      * @Route("/", name="competence_index")
      * @Method({"GET", "POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(Request $request)
     {
         $competence = new Competence();
-        $form = $this->createForm('AppBundle\Form\CompetenceType', $competence);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $file slaat de geuploadde afbeelding op
-            /** @var UploadedFile $file */
-            $file = $competence->getLogo();
-
-            // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
-
-            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-            $file->move(
-                $this->getParameter('competence_logo_directory'),
-                $fileName
-            );
-
-            $competence->setLogo($fileName);
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($competence);
-            $em->flush();
-        }
+        $form = self::createNewForm($this, $competence, $request);
 
         $em = $this->getDoctrine()->getManager();
 
         $competences = $em->getRepository('AppBundle:Competence')->findAll();
 
-        $deletes = [];
-        foreach ($competences as $c){
-            $delete = $this->createDeleteForm($c);
-            $delete->handleRequest($request);
-            if ($delete->isSubmitted() && $delete->isValid()) {
-                $em->remove($c);
-                $em->flush();
-            }
-            array_push($deletes, $delete->createView());
-        }
+        $deletes = $this->createDeleteForms($this, $competences, $request);
 
         $editor = $this->isGranted('ROLE_ADMIN');
 
@@ -88,36 +60,11 @@ class CompetenceController extends Controller
      */
     public function newAction(Request $request)
     {
-        $competence = new Competence();
-        $form = $this->createForm('AppBundle\Form\CompetenceType', $competence);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $file slaat de geuploadde afbeelding op
-            /** @var UploadedFile $file */
-            $file = $competence->getLogo();
-
-            // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
-
-            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-            $file->move(
-                $this->getParameter('competence_logo_directory'),
-                $fileName
-            );
-
-            $competence->setLogo($fileName);
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($competence);
-            $em->flush();
-
-            return $this->redirectToRoute('competence_show', array('id' => $competence->getId()));
-        }
+        $form = self::createNewForm($this, new Competence(), $request);
 
         return $this->render('competence/competence.html.twig', array(
             'standalone' => true,
-            'competence' => $competence,
             'form' => $form->createView(),
         ));
     }
@@ -127,34 +74,17 @@ class CompetenceController extends Controller
      *
      * @Route("/{id}", name="competence_show")
      * @Method("GET")
+     * @param Competence $competence
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(Competence $competence)
     {
-        $deleteForm = $this->createDeleteForm($competence);
+        $deleteForm = self::createDeleteForm($this, $competence);
 
         return $this->render('competence/show.html.twig', array(
             'competence' => $competence,
             'delete_form' => $deleteForm->createView(),
         ));
-    }
-
-    function base64_to_jpeg($base64_string, $output_file)
-    {
-        // open the output file for writing
-        $ifp = fopen($output_file, 'wb');
-
-        // split the string on commas
-        // $data[ 0 ] == "data:image/png;base64"
-        // $data[ 1 ] == <actual base64 string>
-        $data = explode(',', $base64_string);
-
-        // we could add validation here with ensuring count( $data ) > 1
-        fwrite($ifp, base64_decode($data[1]));
-
-        // clean up the file resource
-        fclose($ifp);
-
-        return $output_file;
     }
 
     /**
@@ -168,11 +98,9 @@ class CompetenceController extends Controller
      */
     public function editAction(Request $request, Competence $competence)
     {
-        $deleteForm = $this->createDeleteForm($competence);
-        $editForm = $this->createForm('AppBundle\Form\CompetenceType', $competence);
-        $editForm->handleRequest($request);
-
         if (!is_null($request->get('type'))) {
+
+            $message = [];
 
             $type = $request->get('type');
             $data = $request->get('data');
@@ -184,20 +112,19 @@ class CompetenceController extends Controller
                     $competence->setDescription($data);
                     break;
                 case 'logo':
-                    set_error_handler(function($errno, $errstr, $errfile, $errline ){
+                    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
                         throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
                     });
                     try {
                         unlink($this->getParameter('competence_logo_directory') . $competence->getLogo());
                     } catch (Exception $exception) {
-                        dump($exception);
+                        array_push($message, $exception);
                     }
 
                     list($type, $data) = explode(';', $data);
                     list(, $data) = explode(',', $data);
                     $data = base64_decode($data);
-                    $name = str_replace(' ', '_', $competence->getName());
-                    $fileName = $name . '.' . explode('/', $type)[1];
+                    $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . explode('/', $type)[1];
 
                     // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
                     file_put_contents($this->getParameter('competence_logo_directory') . $fileName, $data);
@@ -206,34 +133,10 @@ class CompetenceController extends Controller
                 default:
             }
             $this->getDoctrine()->getManager()->flush();
-            return new JsonResponse(['success' => true, 'competence' => $competence, 'type' => $type]);
+            return new JsonResponse(['success' => true, 'competence' => $competence, 'type' => $type, 'message' => $message]);
         }
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            // $file slaat de geuploadde afbeelding op
-            /** @var UploadedFile $file */
-            $file = $competence->getLogo();
-
-            // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
-
-            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-            $file->move(
-                $this->getParameter('competence_logo_directory'),
-                $fileName
-            );
-
-            $competence->setLogo($fileName);
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('competence_edit', array('id' => $competence->getId()));
-        }
-
-        return $this->render('competence/competence.html.twig', array(
-            'competence' => $competence,
-            'form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        return new JsonResponse(['succes' => false]);
     }
 
     /**
@@ -241,10 +144,13 @@ class CompetenceController extends Controller
      *
      * @Route("/{id}", name="competence_delete")
      * @Method("DELETE")
+     * @param Request $request
+     * @param Competence $competence
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteAction(Request $request, Competence $competence)
     {
-        $form = $this->createDeleteForm($competence);
+        $form = self::createDeleteForm($this, $competence);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -259,15 +165,71 @@ class CompetenceController extends Controller
     /**
      * Creates a form to delete a competence entity.
      *
-     * @param Competence $competence The competence entity
-     *
+     * @param Controller $controller
+     * @param Competence $competence
      * @return \Symfony\Component\Form\Form The form
+     * @internal param FormBuilder $formBuilder
+     * @internal param string $url
+     * @internal param Competence $competence The competence entity
      */
-    private function createDeleteForm(Competence $competence)
+    private static function createDeleteForm(Controller $controller, Competence $competence)
     {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('competence_delete', array('id' => $competence->getId())))
+        return $controller->createFormBuilder()
+            ->setAction($controller->generateUrl('competence_delete', ['id' => $competence->getId()]))
             ->setMethod('DELETE')
             ->getForm();
+    }
+
+    /**
+     * @param Controller $controller
+     * @param array $competences
+     * @param Request $request
+     * @return array
+     */
+    public static function createDeleteForms(Controller $controller, array $competences, Request $request)
+    {
+        $deletes = [];
+        foreach ($competences as $c) {
+            $delete = self::createDeleteForm($controller, $c);
+            $delete->handleRequest($request);
+            $em = $controller->getDoctrine()->getManager();
+            if ($delete->isSubmitted() && $delete->isValid()) {
+                $em->remove($c);
+                $em->flush();
+            }
+            array_push($deletes, $delete->createView());
+        }
+        return $deletes;
+    }
+
+    public static function createNewForm(Controller $controller, Competence $competence, Request $request)
+    {
+        $form = $controller->createForm('AppBundle\Form\CompetenceType', $competence);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // $file slaat de geuploadde afbeelding op
+            /** @var UploadedFile $file */
+            $file = $competence->getLogo();
+
+            // genereer een unique naam voor het bestand voor het opgeslagen wordt
+            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
+
+            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
+            $file->move(
+                $controller->getParameter('competence_logo_directory'),
+                $fileName
+            );
+
+            $competence->setLogo($fileName);
+
+            $em = $controller->getDoctrine()->getManager();
+            $em->persist($competence);
+            $em->flush();
+
+            return $controller->redirectToRoute('competence_show', array('id' => $competence->getId()));
+        }
+
+        return $form;
     }
 }

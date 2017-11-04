@@ -32,11 +32,10 @@
     <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/agency.min.js') }}"></script>
     <script src="{{ asset('js/jquery.easing.min.js') }}"></script>
-    <!-- Lazy load -->
-    <script src="http://wzrd.in/standalone/uuid%2Fv4@latest"></script>
-    <script>
-        uuidv4(); // -> v4 UUID
-    </script>     <script src="{{ asset('javascript/main.js') }}"></script>
+    {% if editor %}
+    <script src="{{ asset('javascript/editor.js') }}"></script>
+    {% endif %}
+    <script src="{{ asset('javascript/main.js') }}"></script>
     <!-- google analytics -->
     <!--suppress CommaExpressionJS -->
     <script>
