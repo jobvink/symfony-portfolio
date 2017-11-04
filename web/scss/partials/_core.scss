@@ -6,3 +6,15 @@ img[alt] {
   font-size: 10pt;
   max-width: 100%;
 }
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  label {
+    display: block;
+    text-align: center;
+  }
+
+}

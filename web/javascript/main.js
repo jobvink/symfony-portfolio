@@ -58,7 +58,7 @@ var edit = function (obj, type, url) {
 };
 
 submit = function (base, context, url, type, callback) {
-    var $original = $('<'+base.prop('tagName')+'>');
+    var $original = $('<' + base.prop('tagName') + '>');
     $original.attr('class', context.attr('class'));
     $original.attr('data-type', type);
     $original.attr('data-path', url);
@@ -79,3 +79,21 @@ submit = function (base, context, url, type, callback) {
         console.log(res);
     });
 };
+
+$('.edit-image').on('click', function () {
+    var input = document.getElementById(this.dataset.target);
+    input.click();
+    var that = this;
+    input.addEventListener('change', function (e) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(that).attr('src', e.target.result);
+                $.post($(that).data('path'), {'type':'logo','data':e.target.result},function (res) {
+                    console.log(res);
+                })
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
+});

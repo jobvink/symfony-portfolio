@@ -4,11 +4,15 @@
 {% block body %}
 
     <div class="col-12 col-md-6 col-lg-4 top-buffer">
-                        <span class="competenties-circle">
-                            <img src="{{ asset('img/Rolling.gif') }}"
-                                 data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
-                                 alt="{{ competence.name }}">
-                        </span>
+        <span class="competenties-circle">
+            <input type="file" id="logo_{{ iter }}" style="display: none;">
+            <img class="edit-image"
+                 data-target="logo_{{ iter }}"
+                 data-path="{{ path('competence_edit', {'id':competence.id}) }}"
+                 src="{{ asset('img/Rolling.gif') }}"
+                 data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
+                 alt="{{ competence.name }}">
+        </span>
         <h4 {% if editor %}
             data-type="name"
             data-path="{{ path('competence_edit', {'id':competence.id}) }}"

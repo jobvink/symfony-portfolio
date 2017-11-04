@@ -3,9 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Competence;
+use ErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,9 +32,13 @@ class CompetenceController extends Controller
 
         $competences = $em->getRepository('AppBundle:Competence')->findAll();
 
+        $editor = $this->isGranted('ROLE_ADMIN');
+
         return $this->render('competence/index.html.twig', array(
             'competences' => $competences,
-            'user' => $this->getUser()
+            'user' => $this->getUser(),
+            'editor' => $editor,
+            'standalone' => true
         ));
     }
 
@@ -92,6 +99,25 @@ class CompetenceController extends Controller
         ));
     }
 
+    function base64_to_jpeg($base64_string, $output_file)
+    {
+        // open the output file for writing
+        $ifp = fopen($output_file, 'wb');
+
+        // split the string on commas
+        // $data[ 0 ] == "data:image/png;base64"
+        // $data[ 1 ] == <actual base64 string>
+        $data = explode(',', $base64_string);
+
+        // we could add validation here with ensuring count( $data ) > 1
+        fwrite($ifp, base64_decode($data[1]));
+
+        // clean up the file resource
+        fclose($ifp);
+
+        return $output_file;
+    }
+
     /**
      * Displays a form to edit an existing competence entity.
      *
@@ -109,19 +135,40 @@ class CompetenceController extends Controller
         $editForm->handleRequest($request);
 
         if (!is_null($request->get('type'))) {
+
             $type = $request->get('type');
             $data = $request->get('data');
-            switch ($type){
+            switch ($type) {
                 case 'name':
                     $competence->setName($data);
                     break;
                 case 'description':
                     $competence->setDescription($data);
                     break;
+                case 'logo':
+                    set_error_handler(function($errno, $errstr, $errfile, $errline ){
+                        throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+                    });
+                    try {
+                        unlink($this->getParameter('competence_logo_directory') . $competence->getLogo());
+                    } catch (Exception $exception) {
+                        dump($exception);
+                    }
+
+                    list($type, $data) = explode(';', $data);
+                    list(, $data) = explode(',', $data);
+                    $data = base64_decode($data);
+                    $name = str_replace(' ', '_', $competence->getName());
+                    $fileName = $name . '.' . explode('/', $type)[1];
+
+                    // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
+                    file_put_contents($this->getParameter('competence_logo_directory') . $fileName, $data);
+
+                    $competence->setLogo($fileName);
                 default:
             }
             $this->getDoctrine()->getManager()->flush();
-            return new JsonResponse(['success'=>true,'data'=>$data,'competence'=>$competence,'type'=>$type]);
+            return new JsonResponse(['success' => true, 'competence' => $competence, 'type' => $type]);
         }
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -183,7 +230,6 @@ class CompetenceController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('competence_delete', array('id' => $competence->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }

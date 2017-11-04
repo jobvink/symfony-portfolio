@@ -1,22 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <img src="{{ asset('uploads/competences/' ~ competence.logo) }}" alt="Logo">
-    <input type="submit" value="Save"/>
-    {{ form_end(form) }}
-
-    <ul>
-        <li>
-            <a href="{{ path('competence_index') }}">Back to the list</a>
-        </li>
-        {% if delete_form is defined %}
-            <li>
-                {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-                {{ form_end(delete_form) }}
-            </li>
+    <a class="btn btn-primary" href="{{ path('competence_index') }}">Back to the list</a>
+    <div class="col-12 col-md-6 col-lg-4">
+        {{ form_start(form, {'attr':{'class':'flex-column'}}) }}
+        {% if competence.logo is defined and competence.logo is not null %}
+            <img src="{{ asset('uploads/competences/' ~ competence.logo) }}" alt="Logo">
         {% endif %}
-    </ul>
+        {{ form_row(form.logo, {'attr': {'class':''}}) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.description) }}
+        <input type="submit" value="Save"/>
+        {{ form_end(form) }}
+        {% if delete_form is defined %}
+            {{ form_start(delete_form) }}
+            <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        {% endif %}
+    </div>
 {% endblock %}

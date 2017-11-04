@@ -12,8 +12,11 @@
                 </div>
             </div>
             <div class="row text-center">
+                {% set iter = 0 %}
                 {% for competence in competences %}
+                    {% set standalone = false %}
                     {% include ':competence:show.html.twig' %}
+                    {% set iter = iter + 1 %}
                 {% endfor %}
             </div>
         </div>
