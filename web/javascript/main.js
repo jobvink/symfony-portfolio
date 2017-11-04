@@ -81,17 +81,38 @@ submit = function (base, context, url, type, callback) {
 };
 
 $('.edit-image').on('click', function () {
-    var input = document.getElementById(this.dataset.target);
-    input.click();
+    var input = document.getElementById(this.dataset.input);
+    var target = document.getElementById(this.dataset.img);
     var that = this;
-    input.addEventListener('change', function (e) {
+    input.click();
+    input.addEventListener('change', function () {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                $(that).attr('src', e.target.result);
+                $(target).attr('src', e.target.result);
                 $.post($(that).data('path'), {'type':'logo','data':e.target.result},function (res) {
                     console.log(res);
                 })
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
+});
+
+$('.new-image').on('click', function () {
+    var input = document.getElementById(this.dataset.input);
+    var target = document.getElementById(this.dataset.img);
+    var that = this;
+    input.click();
+    input.addEventListener('change', function () {
+        if (input.files && input.files[0]) {
+            target = $(target);
+            target.replaceWith('<img id="changement">');
+            target = document.getElementById('changement');
+            target.removeAttribute('id');
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(target).attr('src', e.target.result);
             };
             reader.readAsDataURL(input.files[0]);
         }

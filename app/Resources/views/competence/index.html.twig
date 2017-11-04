@@ -15,9 +15,11 @@
                 {% set iter = 0 %}
                 {% for competence in competences %}
                     {% set standalone = false %}
+                    {% set delete = deletes[iter] %}
                     {% include ':competence:show.html.twig' %}
                     {% set iter = iter + 1 %}
                 {% endfor %}
+                {% include 'competence/competence.html.twig' %}
             </div>
         </div>
     </section>

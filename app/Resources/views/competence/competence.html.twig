@@ -1,21 +1,22 @@
-{% extends 'base.html.twig' %}
+{% set standalone = standalone ?? false %}
+{% extends standalone ? 'base.html.twig' : 'null.html.twig' %}
 
 {% block body %}
-    <a class="btn btn-primary" href="{{ path('competence_index') }}">Back to the list</a>
-    <div class="col-12 col-md-6 col-lg-4">
-        {{ form_start(form, {'attr':{'class':'flex-column'}}) }}
-        {% if competence.logo is defined and competence.logo is not null %}
-            <img src="{{ asset('uploads/competences/' ~ competence.logo) }}" alt="Logo">
-        {% endif %}
-        {{ form_row(form.logo, {'attr': {'class':''}}) }}
-        {{ form_row(form.name) }}
-        {{ form_row(form.description) }}
+    <div class="col-12 col-md-6 col-lg-4 top-buffer competenties-item">
+        <div class="new-image competenties-circle"
+             data-img="logo_icon"
+             data-input="appbundle_competence_logo"
+             data-path="{{ path('competence_new') }}">
+            <i id="logo_icon" class="fa fa-plus"></i>
+        </div>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
         <input type="submit" value="Save"/>
         {{ form_end(form) }}
-        {% if delete_form is defined %}
-            {{ form_start(delete_form) }}
-            <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        {% endif %}
     </div>
+    {% if delete_form is defined %}
+        {{ form_start(delete_form) }}
+        <input type="submit" value="Delete">
+        {{ form_end(delete_form) }}
+    {% endif %}
 {% endblock %}

@@ -5,9 +5,17 @@
   border-radius: 100%;
   width: 2em;
   height: 2em;
-  display: inline-block;
   font-size: 4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.competenties-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .top-buffer {

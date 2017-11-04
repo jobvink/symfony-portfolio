@@ -3,12 +3,13 @@
 
 {% block body %}
 
-    <div class="col-12 col-md-6 col-lg-4 top-buffer">
-        <span class="competenties-circle">
-            <input type="file" id="logo_{{ iter }}" style="display: none;">
-            <img class="edit-image"
-                 data-target="logo_{{ iter }}"
-                 data-path="{{ path('competence_edit', {'id':competence.id}) }}"
+    <div class="col-12 col-md-6 col-lg-4 top-buffer competenties-item">
+        <input type="file" id="logo_input_{{ iter }}" style="display: none;">
+        <span class="competenties-circle edit-image"
+              data-img="logo_{{ iter }}"
+              data-input="logo_input_{{ iter }}"
+              data-path="{{ path('competence_edit', {'id':competence.id}) }}">
+            <img id="logo_{{ iter }}"
                  src="{{ asset('img/Rolling.gif') }}"
                  data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
                  alt="{{ competence.name }}">
@@ -21,6 +22,9 @@
             data-type="description"
             data-path="{{ path('competence_edit', {'id':competence.id}) }}"
         {% endif %} class="text-muted{{ editor ? ' editable' }}">{{ competence.description }}</p>
+        {{ form_start(delete) }}
+        <input type="submit" value="Remove">
+        {{ form_end(delete) }}
     </div>
 
 {% endblock %}

@@ -24,21 +24,59 @@ class CompetenceController extends Controller
      * Lists all competence entities.
      *
      * @Route("/", name="competence_index")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $competence = new Competence();
+        $form = $this->createForm('AppBundle\Form\CompetenceType', $competence);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // $file slaat de geuploadde afbeelding op
+            /** @var UploadedFile $file */
+            $file = $competence->getLogo();
+
+            // genereer een unique naam voor het bestand voor het opgeslagen wordt
+            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
+
+            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
+            $file->move(
+                $this->getParameter('competence_logo_directory'),
+                $fileName
+            );
+
+            $competence->setLogo($fileName);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($competence);
+            $em->flush();
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $competences = $em->getRepository('AppBundle:Competence')->findAll();
+
+        $deletes = [];
+        foreach ($competences as $c){
+            $delete = $this->createDeleteForm($c);
+            $delete->handleRequest($request);
+            if ($delete->isSubmitted() && $delete->isValid()) {
+                $em->remove($c);
+                $em->flush();
+            }
+            array_push($deletes, $delete->createView());
+        }
 
         $editor = $this->isGranted('ROLE_ADMIN');
 
         return $this->render('competence/index.html.twig', array(
             'competences' => $competences,
+            'deletes' => $deletes,
             'user' => $this->getUser(),
             'editor' => $editor,
-            'standalone' => true
+            'standalone' => true,
+            'form' => $form->createView()
         ));
     }
 
@@ -78,6 +116,7 @@ class CompetenceController extends Controller
         }
 
         return $this->render('competence/competence.html.twig', array(
+            'standalone' => true,
             'competence' => $competence,
             'form' => $form->createView(),
         ));
@@ -130,8 +169,7 @@ class CompetenceController extends Controller
     public function editAction(Request $request, Competence $competence)
     {
         $deleteForm = $this->createDeleteForm($competence);
-        $editForm = $this->createForm('AppBundle\Form\CompetenceType', $competence, [
-        ]);
+        $editForm = $this->createForm('AppBundle\Form\CompetenceType', $competence);
         $editForm->handleRequest($request);
 
         if (!is_null($request->get('type'))) {
