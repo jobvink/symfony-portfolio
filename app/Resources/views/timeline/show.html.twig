@@ -68,8 +68,8 @@
                         {{ timelineController.dropdown(timeline.endDate, iter, 'end') }}
                     {% endif %}
                 {% else %}
-                    <h4 class="dropdown-toggle">{{ timeline.beginDate|localdate('nl', 'F Y') }}{% if timeline.endDate is not null %}
-                            - {{ timeline.endDate|localdate('nl', 'F Y') }}{% endif %}</h4>
+                    <h4 class="dropdown-toggle">{{ timeline.beginDate|localdate('nl', '%B %Y') }}{% if timeline.endDate is not null %}
+                            - {{ timeline.endDate|localdate('nl', '%B %Y') }}{% endif %}</h4>
                 {% endif %}
                 <div class="subheading">
                     {% if editor %}
@@ -92,7 +92,9 @@
                     data-type="description"
                     data-path="timeline_path_{{ iter }}"
                 {% endif %} class="text-muted{{ editor ? ' editable' }}">{{ timeline.description }}</p>
+                {% if editor %}
                 {{ form_start(delete) }}<input type="submit" value="Remove">{{ form_end(delete) }}
+                {% endif %}
             </div>
         </div>
         {% if editor %}
