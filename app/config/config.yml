@@ -7,10 +7,10 @@ imports:
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    competence_logo_directory: '%kernel.project_dir%/web/uploads/competences/'
-    timeline_logo_directory: '%kernel.project_dir%/web/uploads/timeline/'
-    portfolio_logo_directory: '%kernel.project_dir%/web/uploads/portfolio/'
-    items_directory: '%kernel.project_dir%/web/uploads/portfolio/items/'
+    competence_logo_directory: '%kernel.project_dir%/%web_dir%/uploads/competences/'
+    timeline_logo_directory: '%kernel.project_dir%/%web_dir%/uploads/timeline/'
+    portfolio_logo_directory: '%kernel.project_dir%/%web_dir%/uploads/portfolio/'
+    items_directory: '%kernel.project_dir%/%web_dir%/uploads/portfolio/items/'
 
 framework:
     #esi: ~
