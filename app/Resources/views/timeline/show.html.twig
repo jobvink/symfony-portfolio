@@ -1,6 +1,56 @@
 {% set standalone = standalone ?? false %}
 {% extends standalone ? 'base.html.twig' : 'null.html.twig' %}
 
+{% macro dropdown(date, iter, time) %}
+    <div class="dropdown d-inline">
+        <h4 class="dropdown-toggle d-inline" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="true">
+            {{ date|localdate('nl', '%B') }}
+        </h4>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="1">Jannuair</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="2">Februari</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="3">Maart</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="4">April</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="5">Mei</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="6">Juni</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="7">Juli</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="8">Augustus</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="9">September</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="10">Oktober</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="11">November</a></li>
+            <li><a class="edit-dropdown" data-id="dropdownMenu1" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-type="month" data-value="12">December</a></li>
+        </ul>
+    </div>
+    <div class="dropdown d-inline">
+        <h4 class="dropdown-toggle d-inline" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="true">
+            {{ date|localdate('nl', '%Y') }}
+        </h4>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2001">2001</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2002">2002</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2003">2003</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2004">2004</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2005">2005</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2006">2006</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2007">2007</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2008">2008</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2009">2009</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2010">2010</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2011">2011</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2012">2012</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2013">2013</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2014">2014</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2015">2015</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2016">2016</a></li>
+            <li><a class="edit-dropdown" data-time="{{ time }}" data-path="timeline_path_{{ iter }}" data-id="dropdownMenu2" data-type="year" data-value="2017">2017</a></li>
+        </ul>
+    </div>
+{% endmacro %}
+{% import _self as timelineController %}
+
+
 {% block body %}
     <li {% if iter is defined and iter % 2 == 0 %}class="timeline-inverted"{% endif %}>
         <div class="timeline-image">
@@ -11,17 +61,25 @@
         </div>
         <div class="timeline-panel">
             <div class="timeline-heading">
-                <h4>{{ timeline.beginDate|localdate('nl', 'F Y') }}{% if timeline.endDate is not null %}
-                        - {{ timeline.endDate|localdate('nl', 'F Y') }}{% endif %}</h4>
+                {% if editor %}
+                    {{ timelineController.dropdown(timeline.beginDate, iter, 'begin') }}
+                    {% if timeline.endDate is not null %}
+                        <h4 class="d-inline"> - </h4>
+                        {{ timelineController.dropdown(timeline.endDate, iter, 'end') }}
+                    {% endif %}
+                {% else %}
+                    <h4 class="dropdown-toggle">{{ timeline.beginDate|localdate('nl', 'F Y') }}{% if timeline.endDate is not null %}
+                            - {{ timeline.endDate|localdate('nl', 'F Y') }}{% endif %}</h4>
+                {% endif %}
                 <div class="subheading">
                     {% if editor %}
                         <h5 data-type="employer"
-                            data-path="{{ path('timeline_edit', {'id':timeline.id}) }}"
+                            data-path="timeline_path_{{ iter }}"
                             class="editable"
                         >{{ timeline.employer }}</h5>
-                        <span>&nbsp;-&nbsp;</span>
+                        <h4 class="d-inline">&nbsp;-&nbsp;</h4>
                         <h5 data-type="employer"
-                            data-path="{{ path('timeline_edit', {'id':timeline.id}) }}"
+                            data-path="timeline_path_{{ iter }}"
                             class="editable"
                         >{{ timeline.function }}</h5>
                     {% else %}
@@ -31,10 +89,16 @@
             </div>
             <div class="timeline-body">
                 <p {% if editor %}
-                        data-type="description"
-                        data-path="{{ path('timeline_edit', {'id':timeline.id}) }}"
+                    data-type="description"
+                    data-path="timeline_path_{{ iter }}"
                 {% endif %} class="text-muted{{ editor ? ' editable' }}">{{ timeline.description }}</p>
             </div>
         </div>
+        {% if editor %}
+            {#{{ form_start(delete) }}<input type="submit" value="Remove">{{ form_end(delete) }}#}
+            <div id="timeline_path_{{ iter }}" class="hidden"
+                 data-path="{{ path('timeline_edit', {'id':timeline.id}) }}"></div>
+            <input type="file" id="timeline_logo_input_{{ iter }}" class="hidden">
+        {% endif %}
     </li>
 {% endblock %}

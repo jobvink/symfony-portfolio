@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Timeline;
+use Carbon\Carbon;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -22,15 +23,48 @@ class TimelineController extends Controller
      *
      * @Route("/", name="timeline_index")
      * @Method("GET")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
         $timelines = $em->getRepository('AppBundle:Timeline')->findAll();
 
+        $timeline = new Timeline();
+        $form = $this->createForm('AppBundle\Form\TimelineType', $timeline);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // $file slaat de geuploadde afbeelding op
+            /** @var UploadedFile $file */
+            $file = $timeline->getLogo();
+
+            // genereer een unique naam voor het bestand voor het opgeslagen wordt
+            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $timeline->getEmployer()) . '.' . $file->guessExtension();
+
+            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
+            $file->move(
+                $this->getParameter('timeline_logo_directory'),
+                $fileName
+            );
+
+            $timeline->setLogo($fileName);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($timeline);
+            $em->flush();
+
+            return $this->redirectToRoute('timeline_show', array('id' => $timeline->getId()));
+        }
+
         return $this->render('timeline/index.html.twig', array(
             'timelines' => $timelines,
+            'form' => $form->createView(),
+            'editor' => true,
+            'standalone' => true
         ));
     }
 
@@ -73,6 +107,8 @@ class TimelineController extends Controller
         return $this->render('timeline/timeline.html.twig', array(
             'timeline' => $timeline,
             'form' => $form->createView(),
+            'editor' => true,
+            'standalone' => true
         ));
     }
 
@@ -117,6 +153,19 @@ class TimelineController extends Controller
                 case 'description':
                     $timeline->setDescription($data);
                     break;
+                case 'month':
+                    if ($request->get('extra') == 'begin') {
+                        $timeline->setBeginDate(new \DateTime(Carbon::instance($timeline->getBeginDate())->month($data)->toDateString()));
+                    } else {
+                        $timeline->setEndDate(new \DateTime(Carbon::instance($timeline->getEndDate())->month($data)->toDateString()));
+                    }
+                    break;
+                case 'year':
+                    if ($request->get('extra') == 'begin') {
+                        $timeline->setBeginDate(new \DateTime(Carbon::instance($timeline->getBeginDate())->year($data)->toDateString()));
+                    } else if ($timeline->getEndDate() != null) {
+                        $timeline->setEndDate(new \DateTime(Carbon::instance($timeline->getEndDate())->year($data)->toDateString()));
+                    }
                 default:
             }
             $this->getDoctrine()->getManager()->flush();

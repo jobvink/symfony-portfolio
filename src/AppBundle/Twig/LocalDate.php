@@ -29,13 +29,13 @@ class LocalDate extends Twig_Extension
         Carbon::setLocale($locale);
         $output->setTimezone('Europe/Amsterdam');
 
-
-//        if (!is_null($format)) {
-//        } else {
-//            $output->format($format);
-//            $output = $output->toFormattedDateString();
-//        }
-        setlocale(LC_TIME, 'nl_NL');
-        return $output->formatLocalized('%B %Y');
+        if (!is_null($format)) {
+            setlocale(LC_TIME, 'nl_NL');
+            $output = $output->formatLocalized($format);
+        } else {
+            setlocale(LC_TIME, 'nl_NL');
+            $output = $output->formatLocalized('%B %Y');
+        }
+        return $output;
     }
 }

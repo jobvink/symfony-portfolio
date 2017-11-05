@@ -18,6 +18,9 @@
                             {% include ':timeline:show.html.twig' %}
                             {% set iter = iter + 1 %}
                         {% endfor %}
+                        {% if editor %}
+                            {% include 'timeline/timeline.html.twig' %}
+                        {% endif %}
                     </ul>
                 </div>
             </div>

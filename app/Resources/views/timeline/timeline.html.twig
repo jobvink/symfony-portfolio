@@ -1,16 +1,37 @@
-{% extends 'base.html.twig' %}
+{% set standalone = standalone ?? false %}
+{% extends standalone ? 'base.html.twig' : 'null.html.twig' %}
 
 {% block body %}
-    <h1>Timeline creation</h1>
-
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <input type="submit" value="Create" />
-    {{ form_end(form) }}
-
-    <ul>
-        <li>
-            <a href="{{ path('timeline_index') }}">Back to the list</a>
-        </li>
-    </ul>
+    {#{{ form_start(form) }}#}
+    {{ form_widget(form.beginDate.day,{'attr': { 'style': 'display:none' }}) }}
+    {{ form_widget(form.endDate.day,{'attr': { 'style': 'display:none' }}) }}
+    {#{{ form_widget(form) }}#}
+    {#<input type="submit" value="Create"/>#}
+    {#{{ form_end(form) }}#}
+    {% set iter = iter ?? 0 %}
+    <li {% if iter is defined and iter % 2 == 0 %}class="timeline-inverted"{% endif %}>
+        {{ form_start(form) }}
+        <div class="timeline-image">
+            <img class="img-circle img-responsive"
+                 src="{{ asset('img/Rolling.gif') }}"
+                 {#data-src="{{ asset('uploads/timeline/' ~ timeline.logo) }}"#}
+                 {#alt="{{ timeline.logo }}">#}
+        </div>
+        <div class="timeline-panel">
+            <div class="timeline-heading">
+                <div class="subheading">
+                    {{ form_widget(form.beginDate.day,{'attr': { 'style': 'display:none' }}) }}
+                    {{ form_widget(form.endDate.day,{'attr': { 'style': 'display:none' }}) }}
+                    {{ form_widget(form.beginDate) }}<h4 class="d-inline"> - </h4>{{ form_widget(form.endDate) }}
+                    <br/>
+                    <br/>
+                    {{ form_widget(form.employer) }} - {{ form_widget(form.function) }}
+                </div>
+            </div>
+            <div class="timeline-body">
+                {{ form_widget(form.description) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </li>
 {% endblock %}

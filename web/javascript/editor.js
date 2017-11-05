@@ -3,63 +3,39 @@ $('.editable').on('click', function (target) {
 });
 
 var edit = function (obj, type, url) {
-    var css = ['font-family', 'font-size', 'font-weight', 'font-style', 'color',
-        'text-transform', 'text-decoration', 'varter-spacing', 'word-spacing',
-        'line-height', 'text-align', 'vertical-align', 'direction', 'background-color',
-        'background-image', 'background-repeat', 'background-position',
-        'background-attachment', 'opacity', 'width', 'height', 'top', 'right', 'bottom',
-        'left', 'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
-        'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'position',
-        'display', 'visibility', 'z-index', 'overflow-x', 'overflow-y', 'white-space',
-        'clip', 'float', 'clear', 'cursor', 'list-style-image', 'list-style-position',
-        'list-style-type', 'marker-offset'];
     var $obj = (typeof obj !== 'string') ? $(obj) : $('#' + obj);
-    var $replacement = $('<textarea>');
-    $replacement.html($obj.html());
-    $replacement.attr('class', $obj.attr('class') + ' editor');
-    css.forEach(function (t) {
-        $replacement.css(t, $obj.css(t));
-    });
-    $replacement.width($obj.width() + 5);
-    $replacement.height($replacement.height() + 5);
+    $obj.attr('contenteditable', true);
+    $obj.focus();
+    $obj.addClass('editor');
     url = document.getElementById(url).dataset.path;
+    submit = function (url, type, callback) {
+        var value = $obj.html();
+        $obj.unbind('keypress');
+        document.removeEventListener('click', callback);
+        $obj.attr('contenteditable', false);
+        var data = {
+            type: type,
+            data: value
+        };
+        $.post(url, data, function (res) {
+            console.log(res);
+        });
+    };
     var callback = function (e) {
         var target = $(e.target);
         if (!target.hasClass('editor') && !target.hasClass('editable')) {
-            submit($obj, $replacement, url, type, callback);
+            submit(url, type, callback);
         }
     };
-    $replacement.keypress(function (key) {
+    $obj.keypress(function (key) {
         if (key.key === "Enter") {
-            submit($obj, $replacement, url, type, callback);
+            submit(url, type, callback);
         }
     });
-    $obj.replaceWith($replacement);
     document.addEventListener('click', callback);
 };
 
-submit = function (base, context, url, type, callback) {
-    var $original = $('<' + base.prop('tagName') + '>');
-    $original.attr('class', context.attr('class'));
-    $original.attr('data-type', type);
-    $original.attr('data-path', url);
-    $original.html(context.val());
-    $original.removeClass('editor');
-    $original.on('click', function (target) {
-        var obj = $(this);
-        edit(this, obj.data('type'), obj.data('path'));
-    });
-    context.unbind('keypress');
-    document.removeEventListener('click', callback);
-    context.replaceWith($original);
-    var data = {
-        type: type,
-        data: context.val()
-    };
-    $.post(url, data, function (res) {
-        console.log(res);
-    });
-};
+
 
 $('.edit-image').on('click', function () {
     var input = document.getElementById(this.dataset.input);
@@ -100,3 +76,30 @@ $('.new-image').on('click', function () {
         }
     });
 });
+
+$('.edit-dropdown').on('click', function () {
+    var $obj = $(this);
+    var type = $obj.data('type');
+    var value = $obj.data('value');
+    var time = $obj.data('time');
+    var url = document.getElementById($obj.data('path')).dataset.path;
+    console.log(url);
+    var data = {
+        type: type,
+        data: value,
+        extra: time
+    };
+    $.post(url, data, function (res) {
+        console.log(res);
+    });
+    if (type === 'month') {
+        var monthNames = ["Jannuari", "Februari", "Maart", "April", "Mei", "Juni",
+            "Juli", "Augustus", "September", "Oktober", "November", "December"
+        ];
+        $('#' + $obj.data('id')).html(monthNames[value-1]);
+    } else {
+        $('#' + $obj.data('id')).html(value);
+
+    }
+});
+
