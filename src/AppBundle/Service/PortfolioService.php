@@ -19,20 +19,19 @@ class PortfolioService
 {
 
     public function storeAjaxFile(PortfolioInterface $entity, $data, $basepath) {
-        $name = $entity->getAttacement();
+        $name = $entity->getAttachmentName();
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
         });
-        $fileName = $basepath . $entity->getAttacement();
-        if (file_exists($fileName)) {
-            unlink($basepath . $entity->getAttacement());
-        }
 
         list($type, $data) = explode(';', $data);
         list(, $data) = explode(',', $data);
         $data = base64_decode($data);
         $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $name) . '.' . explode('/', $type)[1];
 
+        if (file_exists($basepath . $name)) {
+            unlink($basepath . $name);
+        }
         // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
         file_put_contents($basepath . $fileName, $data);
 
