@@ -92,6 +92,7 @@
                     data-type="description"
                     data-path="timeline_path_{{ iter }}"
                 {% endif %} class="text-muted{{ editor ? ' editable' }}">{{ timeline.description }}</p>
+                {{ form_start(delete) }}<input type="submit" value="Remove">{{ form_end(delete) }}
             </div>
         </div>
         {% if editor %}

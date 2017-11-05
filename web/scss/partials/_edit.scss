@@ -2,8 +2,20 @@
   cursor: pointer !important;
 }
 
-.competenties-circle {
+.new-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   i {
+    font-size: 56px;
     vertical-align: middle;
+  }
+  img {
+    border-radius: 50%;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    border: 0;
   }
 }

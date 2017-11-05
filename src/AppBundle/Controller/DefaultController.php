@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Competence;
+use AppBundle\Entity\Timeline;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -24,11 +25,16 @@ class DefaultController extends Controller
 
         $editor = $this->isGranted('ROLE_ADMIN');
         $deletes = null;
-        $formview = null;
+        $timelineDeletes = null;
+        $competenceFormview = null;
+        $timelineFormview = null;
         if ($editor) {
             $form = CompetenceController::createNewForm($this, new Competence(), $request);
             $deletes = CompetenceController::createDeleteForms($this, $competences, $request);
-            $formview = $form->createView();
+            $competenceFormview = $form->createView();
+            $form = TimelineController::createNewForm($this, new Timeline(), $request);
+            $timelineDeletes = TimelineController::createDeleteForms($this, $timelines, $request);
+            $timelineFormview = $form->createView();
         }
 
         // replace this example code with whatever you need
@@ -40,7 +46,9 @@ class DefaultController extends Controller
             'editor' => $editor,
             'user' => $this->getUser(),
             'deletes' => $deletes,
-            'form' => $formview
+            'form' => $competenceFormview,
+            'timelineform' => $timelineFormview,
+            'timelinedeletes' => $timelineDeletes
         ]);
     }
 }

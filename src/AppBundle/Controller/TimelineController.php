@@ -31,37 +31,13 @@ class TimelineController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $timelines = $em->getRepository('AppBundle:Timeline')->findAll();
+        $timelineDeletes = TimelineController::createDeleteForms($this, $timelines, $request);
 
-        $timeline = new Timeline();
-        $form = $this->createForm('AppBundle\Form\TimelineType', $timeline);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            // $file slaat de geuploadde afbeelding op
-            /** @var UploadedFile $file */
-            $file = $timeline->getLogo();
-
-            // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $timeline->getEmployer()) . '.' . $file->guessExtension();
-
-            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-            $file->move(
-                $this->getParameter('timeline_logo_directory'),
-                $fileName
-            );
-
-            $timeline->setLogo($fileName);
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($timeline);
-            $em->flush();
-
-            return $this->redirectToRoute('timeline_show', array('id' => $timeline->getId()));
-        }
+        $form = self::createNewForm($this, new Timeline(), $request);
 
         return $this->render('timeline/index.html.twig', array(
             'timelines' => $timelines,
+            'timelinedeletes' => $timelineDeletes,
             'form' => $form->createView(),
             'editor' => true,
             'standalone' => true
@@ -77,32 +53,7 @@ class TimelineController extends Controller
     public function newAction(Request $request)
     {
         $timeline = new Timeline();
-        $form = $this->createForm('AppBundle\Form\TimelineType', $timeline);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            // $file slaat de geuploadde afbeelding op
-            /** @var UploadedFile $file */
-            $file = $timeline->getLogo();
-
-            // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $timeline->getEmployer()) . '.' . $file->guessExtension();
-
-            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-            $file->move(
-                $this->getParameter('timeline_logo_directory'),
-                $fileName
-            );
-
-            $timeline->setLogo($fileName);
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($timeline);
-            $em->flush();
-
-            return $this->redirectToRoute('timeline_show', array('id' => $timeline->getId()));
-        }
+        $form = self::createDeleteForm($this, $timeline);
 
         return $this->render('timeline/timeline.html.twig', array(
             'timeline' => $timeline,
@@ -120,7 +71,7 @@ class TimelineController extends Controller
      */
     public function showAction(Timeline $timeline)
     {
-        $deleteForm = $this->createDeleteForm($timeline);
+        $deleteForm = self::createDeleteForm($this, $timeline);
 
         return $this->render('timeline/show.html.twig', array(
             'timeline' => $timeline,
@@ -136,7 +87,7 @@ class TimelineController extends Controller
      */
     public function editAction(Request $request, Timeline $timeline)
     {
-        $deleteForm = $this->createDeleteForm($timeline);
+        $deleteForm = self::createDeleteForm($this, $timeline);
         $editForm = $this->createForm('AppBundle\Form\TimelineType', $timeline);
         $editForm->handleRequest($request);
 
@@ -190,10 +141,13 @@ class TimelineController extends Controller
      *
      * @Route("/{id}", name="timeline_delete")
      * @Method("DELETE")
+     * @param Request $request
+     * @param Timeline $timeline
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteAction(Request $request, Timeline $timeline)
     {
-        $form = $this->createDeleteForm($timeline);
+        $form = self::createDeleteForm($this, $timeline);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -206,18 +160,58 @@ class TimelineController extends Controller
     }
 
     /**
-     * Creates a form to delete a timeline entity.
+     * Creates a form to delete a competence entity.
      *
-     * @param Timeline $timeline The timeline entity
-     *
+     * @param Controller $controller
+     * @param Timeline $timeline
      * @return \Symfony\Component\Form\Form The form
+     * @internal param FormBuilder $formBuilder
+     * @internal param string $url
+     * @internal param Competence $competence The competence entity
      */
-    private function createDeleteForm(Timeline $timeline)
+    private static function createDeleteForm(Controller $controller, Timeline $timeline)
     {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('timeline_delete', array('id' => $timeline->getId())))
+        return $controller->createFormBuilder()
+            ->setAction($controller->generateUrl('timeline_delete', ['id' => $timeline->getId()]))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
+    }
+
+    /**
+     * @param Controller $controller
+     * @param array $timelines
+     * @param Request $request
+     * @return array
+     */
+    public static function createDeleteForms(Controller $controller, array $timelines, Request $request)
+    {
+        $deletes = [];
+        foreach ($timelines as $t) {
+            $delete = self::createDeleteForm($controller, $t);
+            $delete->handleRequest($request);
+            $em = $controller->getDoctrine()->getManager();
+            if ($delete->isSubmitted() && $delete->isValid()) {
+                $em->remove($t);
+                $em->flush();
+            }
+            array_push($deletes, $delete->createView());
+        }
+        return $deletes;
+    }
+
+    public static function createNewForm(Controller $controller, Timeline $timeline, Request $request)
+    {
+        $form = $controller->createForm('AppBundle\Form\TimelineType', $timeline);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ps = $controller->get('app.portfolio_service');
+            $ps->storeFile($timeline, $controller->getParameter('timeline_logo_directory'));
+            $em = $controller->getDoctrine()->getManager();
+            $em->persist($timeline);
+            $em->flush();
+        }
+
+        return $form;
     }
 }

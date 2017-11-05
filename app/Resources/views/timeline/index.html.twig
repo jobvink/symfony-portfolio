@@ -15,6 +15,7 @@
                     <ul class="timeline">
                         {% set iter = 0 %}
                         {% for timeline in timelines %}
+                            {% set delete = editor ? timelinedeletes[iter] : null %}
                             {% include ':timeline:show.html.twig' %}
                             {% set iter = iter + 1 %}
                         {% endfor %}

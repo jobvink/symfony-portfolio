@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="competence")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CompetenceRepository")
  */
-class Competence
+class Competence implements PortfolioInterface
 {
     /**
      * @var int
@@ -123,6 +123,21 @@ class Competence
     public function getLogo()
     {
         return $this->logo;
+    }
+
+    public function getAttacement()
+    {
+        return $this->getLogo();
+    }
+
+    public function setAttacement($attacement)
+    {
+        $this->setLogo($attacement);
+    }
+
+    public function getAttachmentName()
+    {
+        return $this->getName();
     }
 }
 

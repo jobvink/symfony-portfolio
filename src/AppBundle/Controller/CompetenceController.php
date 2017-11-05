@@ -112,24 +112,8 @@ class CompetenceController extends Controller
                     $competence->setDescription($data);
                     break;
                 case 'logo':
-                    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-                        throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
-                    });
-                    try {
-                        unlink($this->getParameter('competence_logo_directory') . $competence->getLogo());
-                    } catch (Exception $exception) {
-                        array_push($message, $exception);
-                    }
-
-                    list($type, $data) = explode(';', $data);
-                    list(, $data) = explode(',', $data);
-                    $data = base64_decode($data);
-                    $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . explode('/', $type)[1];
-
-                    // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-                    file_put_contents($this->getParameter('competence_logo_directory') . $fileName, $data);
-
-                    $competence->setLogo($fileName);
+                    $entityService = $this->get('app.portfolio_service');
+                    $entityService->storeAjaxFile($competence, $data, $this->getParameter('competence_logo_directory'));
                 default:
             }
             $this->getDoctrine()->getManager()->flush();
@@ -208,26 +192,12 @@ class CompetenceController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $file slaat de geuploadde afbeelding op
-            /** @var UploadedFile $file */
-            $file = $competence->getLogo();
-
-            // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $competence->getName()) . '.' . $file->guessExtension();
-
-            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-            $file->move(
-                $controller->getParameter('competence_logo_directory'),
-                $fileName
-            );
-
-            $competence->setLogo($fileName);
+            $ps = $controller->get('app.portfolio_service');
+            $ps->storeFile($competence, $controller->getParameter('competence_logo_directory'));
 
             $em = $controller->getDoctrine()->getManager();
             $em->persist($competence);
             $em->flush();
-
-            return $controller->redirectToRoute('competence_show', array('id' => $competence->getId()));
         }
 
         return $form;

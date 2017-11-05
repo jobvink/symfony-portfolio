@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="timeline")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TimelineRepository")
  */
-class Timeline
+class Timeline implements PortfolioInterface
 {
     /**
      * @var int
@@ -216,6 +216,21 @@ class Timeline
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function getAttacement()
+    {
+        return $this->getLogo();
+    }
+
+    public function setAttacement($attacehemt)
+    {
+        $this->setLogo($attacehemt);
+    }
+
+    public function getAttachmentName()
+    {
+        return $this->getEmployer();
     }
 }
 
