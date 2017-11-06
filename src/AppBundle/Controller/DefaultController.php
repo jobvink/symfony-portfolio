@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Competence;
 use AppBundle\Entity\Timeline;
+use AppBundle\Service\Message;
+use AppBundle\Service\MessengerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -37,7 +39,6 @@ class DefaultController extends Controller
             $timelineFormview = $form->createView();
         }
 
-        // replace this example code with whatever you need
         return $this->render(':default:portfolio.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'competences' => $competences,

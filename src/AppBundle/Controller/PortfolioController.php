@@ -46,20 +46,10 @@ class PortfolioController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $file slaat de geuploadde afbeelding op
-            /** @var UploadedFile $file */
-            $file = $portfolio->getImage();
 
-            // genereer een unique naam voor het bestand voor het opgeslagen wordt
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $portfolio->getTitle()) . '.' . $file->guessExtension();
+            $ps = $this->get('app.portfolio_service');
+            $ps->storeFile($portfolio, $this->getParameter('portfolio_logo_directory'));
 
-            // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
-            $file->move(
-                $this->getParameter('portfolio_logo_directory'),
-                $fileName
-            );
-
-            $portfolio->setImage($fileName);
             $em = $this->getDoctrine()->getManager();
             $em->persist($portfolio);
             $em->flush();

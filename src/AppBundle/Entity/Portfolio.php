@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="portfolio")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PortfolioRepository")
  */
-class Portfolio
+class Portfolio implements PortfolioInterface
 {
     /**
      * @var int
@@ -158,6 +158,21 @@ class Portfolio
      * @return string
      */
     public function __toString(): string
+    {
+        return $this->getTitle();
+    }
+
+    public function getAttacement()
+    {
+        return $this->getImage();
+    }
+
+    public function setAttacement($attacehemt)
+    {
+        $this->setImage($attacehemt);
+    }
+
+    public function getAttachmentName()
     {
         return $this->getTitle();
     }
