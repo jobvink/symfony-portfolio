@@ -11,6 +11,7 @@ parameters:
     timeline_logo_directory: '%kernel.project_dir%/%web_dir%/uploads/timeline/'
     portfolio_logo_directory: '%kernel.project_dir%/%web_dir%/uploads/portfolio/'
     items_directory: '%kernel.project_dir%/%web_dir%/uploads/portfolio/items/'
+    image_items_directory: '%kernel.project_dir%/%web_dir%/uploads/portfolio/images/'
 
 framework:
     #esi: ~

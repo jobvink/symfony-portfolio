@@ -18,6 +18,16 @@
                             {% for item in portfolio.items %}
                                 {{ item|portfoliotype(item.type,item.name)|raw }}
                             {% endfor %}
+                            <div class="holder" style="display: none"></div>
+                            <div class="addition">
+                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="image">image</button>
+                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="link">link</button>
+                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="paragraph">paragraph</button>
+                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="video">video</button>
+                            </div>
+                            <div class="hidden">
+                                {% include ':portfolio:addition.html.twig' %}
+                            </div>
                         </div>
                     </div>
                 </div>

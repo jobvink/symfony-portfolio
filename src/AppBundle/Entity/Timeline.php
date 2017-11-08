@@ -218,12 +218,12 @@ class Timeline implements PortfolioInterface
         return $this->description;
     }
 
-    public function getAttacement()
+    public function getAttachment()
     {
         return $this->getLogo();
     }
 
-    public function setAttacement($attacehemt)
+    public function setAttachment($attacehemt)
     {
         $this->setLogo($attacehemt);
     }

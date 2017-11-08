@@ -162,12 +162,12 @@ class Portfolio implements PortfolioInterface
         return $this->getTitle();
     }
 
-    public function getAttacement()
+    public function getAttachment()
     {
         return $this->getImage();
     }
 
-    public function setAttacement($attacehemt)
+    public function setAttachment($attacehemt)
     {
         $this->setImage($attacehemt);
     }

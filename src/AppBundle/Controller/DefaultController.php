@@ -30,6 +30,7 @@ class DefaultController extends Controller
         $timelineDeletes = null;
         $competenceFormview = null;
         $timelineFormview = null;
+        $portfolioModalitemForms = null;
         if ($editor) {
             $form = CompetenceController::createNewForm($this, new Competence(), $request);
             $deletes = CompetenceController::createDeleteForms($this, $competences, $request);
@@ -37,6 +38,7 @@ class DefaultController extends Controller
             $form = TimelineController::createNewForm($this, new Timeline(), $request);
             $timelineDeletes = TimelineController::createDeleteForms($this, $timelines, $request);
             $timelineFormview = $form->createView();
+            $portfolioModalitemForms = ModalItemController::createAllNewForms($this, $portfolios);
         }
 
         return $this->render(':default:portfolio.html.twig', [
@@ -49,7 +51,8 @@ class DefaultController extends Controller
             'deletes' => $deletes,
             'form' => $competenceFormview,
             'timelineform' => $timelineFormview,
-            'timelinedeletes' => $timelineDeletes
+            'timelinedeletes' => $timelineDeletes,
+            'portfolioforms' => $portfolioModalitemForms
         ]);
     }
 }

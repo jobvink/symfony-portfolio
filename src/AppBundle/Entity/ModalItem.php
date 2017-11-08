@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="modal_item")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ModalItemRepository")
  */
-class ModalItem
+class ModalItem implements PortfolioInterface
 {
     /**
      * @var int
@@ -58,9 +58,9 @@ class ModalItem
     private $portfolio;
 
     /**
-     * @return mixed
+     * @return Portfolio
      */
-    public function getPortfolio()
+    public function getPortfolio(): Portfolio
     {
         return $this->portfolio;
     }
@@ -188,6 +188,11 @@ class ModalItem
             default:
                 return $this->getBody();
         }
+    }
+
+    public function getAttachmentName()
+    {
+        return $this->getBody();
     }
 }
 

@@ -36,7 +36,6 @@ var edit = function (obj, type, url) {
 };
 
 
-
 $('.edit-image').on('click', function () {
     var input = document.getElementById(this.dataset.input);
     var target = document.getElementById(this.dataset.img);
@@ -48,9 +47,9 @@ $('.edit-image').on('click', function () {
             reader.onload = function (e) {
                 $(target).attr('src', e.target.result);
                 $.post(document.getElementById(that.dataset.path).dataset.path,
-                    {'type':'logo','data':e.target.result},function (res) {
-                    console.log(res);
-                })
+                    {'type': 'logo', 'data': e.target.result}, function (res) {
+                        console.log(res);
+                    })
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -96,10 +95,35 @@ $('.edit-dropdown').on('click', function () {
         var monthNames = ["Jannuari", "Februari", "Maart", "April", "Mei", "Juni",
             "Juli", "Augustus", "September", "Oktober", "November", "December"
         ];
-        $('#' + $obj.data('id')).html(monthNames[value-1]);
+        $('#' + $obj.data('id')).html(monthNames[value - 1]);
     } else {
         $('#' + $obj.data('id')).html(value);
 
     }
 });
 
+$('.addition').on('click', 'button', function () {
+    var obj = $(this);
+    var type = obj.data('type');
+    var portfolio = obj.data('portfolio');
+    var url = obj.data('path');
+    console.log(obj, type);
+    var replacement = $('.addition_' + portfolio + '_' + type);
+    replacement = replacement.clone();
+    replacement.addClass('holder');
+    var that = obj;
+    document.addEventListener('click', function (e) {
+        var data = {
+            data: that.val(),
+            name: null,
+            type: type,
+            portfolio: portfolio
+        };
+        console.log(url);
+        $.post(url, data, function (res) {
+            console.log(res);
+        })
+    });
+    $('.holder').replaceWith(replacement);
+
+});

@@ -125,12 +125,12 @@ class Competence implements PortfolioInterface
         return $this->logo;
     }
 
-    public function getAttacement()
+    public function getAttachment()
     {
         return $this->getLogo();
     }
 
-    public function setAttacement($attacement)
+    public function setAttachment($attacement)
     {
         $this->setLogo($attacement);
     }

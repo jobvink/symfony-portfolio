@@ -5,8 +5,11 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Choice;
 
 class ModalItemType extends AbstractType
 {
@@ -23,16 +26,28 @@ class ModalItemType extends AbstractType
                     'video' => 'VIDEO_TYPE',
                     'paragraph' => 'PARAGRAPH_TYPE',
                     'link' => 'LINK_TYPE'
+                ],
+                'attr' => [
+                    'class' => 'hidden'
                 ]
             ])
-            ->add('body')
-            ->add('name')
+            ->add('body', TextareaType::class, [
+                'label' => false
+            ])
+            ->add('name', TextType::class, [
+                'label' => false
+            ])
             ->add('attachment', FileType::class, [
-                'label' => 'item attachment',
+                'label' => null,
                 'data_class' => null,
                 'required' => false
             ])
-        ->add('portfolio');
+        ->add('portfolio', null, [
+            'label' => false,
+            'attr' => [
+                'class' => 'hidden'
+            ]
+        ]);
     }
     
     /**
