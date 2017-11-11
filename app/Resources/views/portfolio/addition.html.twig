@@ -1,12 +1,17 @@
 <div class="addition_{{ portfolio.id }}_link">
     <input type="text"><input type="text">
+    <button class="addition_submit_{{ portfolio.id }}_link">Save</button>
 </div>
 <div class="addition_{{ portfolio.id }}_paragraph">
-    <textarea class="editor" name="paragraph" id="paragraph" cols="30" rows="10"></textarea>
+    <textarea class="editor" name="paragraph" id="paragraph_{{ portfolio.id }}" cols="30" rows="10"></textarea>
+    <button class="addition_submit_{{ portfolio.id }}_paragraph">Save</button>
+    <p class="addition_resolve_{{ portfolio.id }}_paragraph"></p>
 </div>
 <div class="addition_{{ portfolio.id }}_image">
     <input type="file">
+    <button class="addition_submit_{{ portfolio.id }}_image">Save</button>
 </div>
 <div class="addition_{{ portfolio.id }}_video">
     <input type="text">
+    <button class="addition_submit_{{ portfolio.id }}_video">Save</button>Save
 </div>

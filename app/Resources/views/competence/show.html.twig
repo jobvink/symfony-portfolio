@@ -2,7 +2,7 @@
 {% extends standalone ? 'base.html.twig' : 'null.html.twig' %}
 
 {% macro contoller(editor, type, path) %}
-    {% if editor %}data-type="{{ type }}" data-path="competence_path_{{ path }}"{% endif %}
+    {% if editor %}data-type="{{ type }}" data-path="{{ path }}"{% endif %}
 {% endmacro %}
 {% import _self as controller %}
 
@@ -11,19 +11,17 @@
     <div class="col-12 col-md-6 col-lg-4 top-buffer competenties-item">
         <span class="competenties-circle edit-image"
               data-img="logo_{{ iter }}" data-input="logo_input_{{ iter }}"
-              {{ controller.contoller(editor, 'logo', iter) }}>
+              {{ controller.contoller(editor, 'logo',  path('competence_edit', {'id':competence.id}) ) }}>
             <img id="logo_{{ iter }}" src="{{ asset('img/Rolling.gif') }}"
                  data-src="{{ asset('uploads/competences/' ~ competence.logo) }}"
                  alt="{{ competence.name }}">
         </span>
-        <h4 {{ controller.contoller(editor, 'name', iter ) }}
+        <h4 {{ controller.contoller(editor, 'name', path('competence_edit', {'id':competence.id}) ) }}
                 class="service-heading{{ editor ? ' editable' }}">{{ competence.name }}</h4>
-        <p {{ controller.contoller(editor, 'description', iter) }}
+        <p {{ controller.contoller(editor, 'description', path('competence_edit', {'id':competence.id})) }}
                 class="text-muted{{ editor ? ' editable' }}">{{ competence.description }}</p>
         {% if editor %}
             {{ form_start(delete) }}<input type="submit" value="Remove">{{ form_end(delete) }}
-            <div id="competence_path_{{ iter }}" class="hidden"
-                 data-path="{{ path('competence_edit', {'id':competence.id}) }}"></div>
             <input type="file" id="logo_input_{{ iter }}" class="hidden">
         {% endif %}
     </div>

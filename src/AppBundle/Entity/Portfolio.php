@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -55,7 +56,7 @@ class Portfolio implements PortfolioInterface
      *
      * @return Portfolio
      */
-    public function setItems(ModalItem $items): Portfolio
+    public function setItem(ModalItem $items): Portfolio
     {
         $this->items = $items;
 
@@ -63,7 +64,7 @@ class Portfolio implements PortfolioInterface
     }
 
     /**
-     * @var $items
+     * @var ModalItem
      *
      * @ORM\OneToMany(targetEntity="ModalItem", mappedBy="portfolio")
      */
@@ -78,6 +79,11 @@ class Portfolio implements PortfolioInterface
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function __construct()
+    {
+        $this->items = new ArrayCollection();
     }
 
     /**

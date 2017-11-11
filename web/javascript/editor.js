@@ -1,13 +1,11 @@
-$('.editable').on('click', function (target) {
-    edit(this, this.dataset.type, this.dataset.path);
-});
 
-var edit = function (obj, type, url) {
+var edit = function (obj) {
     var $obj = (typeof obj !== 'string') ? $(obj) : $('#' + obj);
+    var type = obj.dataset.type;
+    var url = obj.dataset.path;
     $obj.attr('contenteditable', true);
     $obj.focus();
     $obj.addClass('editor');
-    url = document.getElementById(url).dataset.path;
     submit = function (url, type, callback) {
         var value = $obj.html();
         $obj.unbind('keypress');
@@ -34,6 +32,11 @@ var edit = function (obj, type, url) {
     });
     document.addEventListener('click', callback);
 };
+
+$('.editable').on('click', function () {
+    edit(this);
+});
+
 
 
 $('.edit-image').on('click', function () {
@@ -111,19 +114,56 @@ $('.addition').on('click', 'button', function () {
     var replacement = $('.addition_' + portfolio + '_' + type);
     replacement = replacement.clone();
     replacement.addClass('holder');
-    var that = obj;
-    document.addEventListener('click', function (e) {
+    console.log('.addition_submit_' + portfolio + '_' + type);
+    $('.holder').replaceWith(replacement);
+    var $input = replacement.find('.editor#' + type + '_' + portfolio);
+    console.log($input);
+    replacement.find('.addition_submit_' + portfolio + '_' + type).on('click', function () {
         var data = {
-            data: that.val(),
-            name: null,
+            data: $input.val(),
+            name: '',
             type: type,
             portfolio: portfolio
         };
         console.log(url);
         $.post(url, data, function (res) {
-            console.log(res);
-        })
+            var resolvmentBag = res['resolver'];
+            var resolver = new Resolver(type, resolvmentBag);
+            replacement.replaceWith(resolver.resolve());
+        });
+
     });
-    $('.holder').replaceWith(replacement);
 
 });
+
+var Resolver = function (type, bag) {
+    this.resolvement = null;
+    this.resolve = function () {
+        switch (type) {
+            case 'paragraph':
+                this.resolvement = $('<p>');
+                this.resolvement.html(bag['html']);
+                this.resolvement.addClass('editable');
+                this.resolvement.attr('data-type', bag['type']);
+                this.resolvement.attr('data-path', bag['edit']);
+                this.resolvement.on('click', function () {
+                    edit(this);
+                });
+                break;
+            case 'image':
+                this.resolvement = $('<img>');
+                this.resolvement.attr('src' , '/img/Rolling.gif');
+                this.resolvement.attr('data-src', bag['base-path']+bag['data-src']);
+                this.resolvement.attr('alt',bag['name']);
+            case 'video':
+
+            case 'link':
+
+            default:
+                this.resolvement = $('<p>');
+                this.resolvement.html(bag['html']);
+                break;
+        }
+        return this.resolvement;
+    };
+};

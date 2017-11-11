@@ -44,6 +44,7 @@ class ModalItemController extends Controller
      * @param Portfolio $portfolio
      *
      * @Route("/portfolio/{id}/new", name="modalitem_portfolio_new")
+     * @return JsonResponse
      */
     public function newPortfolioAction(Request $request, Portfolio $portfolio) {
         $type = $request->get('type');
@@ -51,7 +52,9 @@ class ModalItemController extends Controller
         $name = $request->get('name');
         $modalItem = new ModalItem();
         $modalItem->setType($type);
+        dump($portfolio);
         $modalItem->setPortfolio($portfolio);
+        $modalItem->setName($name);
         $ps = $this->get('app.portfolio_service');
         $em = $this->getDoctrine()->getManager();
         switch ($type){
@@ -79,7 +82,18 @@ class ModalItemController extends Controller
         }
         $em->persist($modalItem);
         $em->flush();
-        return new JsonResponse(['succes'=>true,'portfolio'=>$portfolio->getTitle()]);
+        $portfolioRepository = $this->getDoctrine()->getRepository('AppBundle:Portfolio');
+        $portfolio = $portfolioRepository->find($portfolio->getId());
+
+        return new JsonResponse(['resolver' => [
+            'data-src' => $modalItem->getAttachment(),
+            'base-path' => $this->getParameter('image_items_directory'),
+            'type' => $modalItem->getType(),
+            'name' => $modalItem->getName(),
+            'html' => $modalItem->getBody(),
+            'edit' => $this->generateUrl('modalitem_edit', ['id'=>$modalItem->getId()]),
+            'delete' => $this->generateUrl('modalitem_delete' , ['id'=>$modalItem->getId()])
+        ]]);
     }
 
     /**
@@ -150,21 +164,28 @@ class ModalItemController extends Controller
      */
     public function editAction(Request $request, ModalItem $modalItem)
     {
-        $deleteForm = $this->createDeleteForm($modalItem);
-        $editForm = $this->createForm('AppBundle\Form\ModalItemType', $modalItem);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('modalitem_edit', array('id' => $modalItem->getId()));
+        $type = $request->get('type');
+        $data = $request->get('data');
+        switch ($type) {
+            case 'image':
+            case 'IMAGE_TYPE':
+                break;
+            case 'video':
+            case 'VIDEO_TYPE':
+                break;
+            case 'paragraph':
+            case 'PARAGRAPH_TYPE':
+                $modalItem->setBody($data);
+                break;
+            case 'link':
+            case 'LINK_TYPE':
+                break;
+            case 'raw':
+            case 'RAW_TYPE':
+            default:
         }
-
-        return $this->render('modalitem/edit.html.twig', array(
-            'modalItem' => $modalItem,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        $this->getDoctrine()->getManager()->flush();
+        return new JsonResponse(['succes' => true, 'request' => $request]);
     }
 
     /**
