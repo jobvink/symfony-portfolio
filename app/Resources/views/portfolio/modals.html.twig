@@ -31,12 +31,12 @@
                                             {% endif %}
                                         </span>
                                     {% else %}
-                                        {{ item|portfoliotype|raw }}
+                                        {{ item|portfoliotype(path('modalitem_edit', {'id':item.id}))|raw }}
                                     {% endif %}
                                 {% endfor %}
                                 {% if editor %}
-                                <div class="holder" style="display: none"></div>
-                                <div class="addition">
+                                <div class="holder_{{ portfolio.id }}" style="display: none"></div>
+                                <div class="addition addition_{{ portfolio.id }}">
                                     <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
                                             data-portfolio="{{ portfolio.id }}" data-type="image">image
                                     </button>

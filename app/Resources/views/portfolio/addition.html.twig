@@ -1,27 +1,3 @@
 {% if editor %}
-<div class="addition_{{ portfolio.id }}_link">
-    <label for="addition_{{ portfolio.id }}_input_name">Naam</label>
-    <input class="addition_{{ portfolio.id }}_input_name" type="text">
-    <label for="addition_{{ portfolio.id }}_input_body" >Target</label>
-    <input type="text" class="addition_{{ portfolio.id }}_input_body">
-    <button class="addition_submit_{{ portfolio.id }}_link">Save</button>
-</div>
-<div class="addition_{{ portfolio.id }}_paragraph">
-    <textarea class="editor" name="paragraph" id="paragraph_{{ portfolio.id }}" cols="30" rows="10"></textarea>
-    <button class="addition_submit_{{ portfolio.id }}_paragraph">Save</button>
-    <p class="addition_resolve_{{ portfolio.id }}_paragraph"></p>
-</div>
-<div class="addition_{{ portfolio.id }}_image">
-    <div class="image-holder" data-input="modal_file_{{ portfolio.id }}">
-        <div class="image-holder-target image-target">
-            Upload image
-        </div></div>
-    <input id="modal_file_{{ portfolio.id }}" type="file" style="display: none;">
-    <input type="text" class="image-name" placeholder="Afbeeldings naam">
-    <button class="addition_submit_{{ portfolio.id }}_image">Save</button>
-</div>
-<div class="addition_{{ portfolio.id }}_video">
-    <input type="text" class="addition_video_{{ portfolio.id }}_input_body">
-    <button class="addition_submit_{{ portfolio.id }}_video">Save</button>
-</div>
+
 {% endif %}

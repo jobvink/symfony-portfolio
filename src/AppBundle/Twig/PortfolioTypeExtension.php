@@ -21,7 +21,7 @@ class PortfolioTypeExtension extends Twig_Extension
         );
     }
 
-    public function convert($item)
+    public function convert($item, $editpath)
     {
         /** @var ModalItem $item */
         $type = $item->getType();
@@ -39,7 +39,7 @@ class PortfolioTypeExtension extends Twig_Extension
                 break;
             case 'paragraph':
             case 'PARAGRAPH_TYPE':
-                $output = "<p>$item</p>";
+                $output = "<p class=\"editable\" data-type=\"paragraph\" data-path=\"$editpath\">$item</p>";
                 break;
             case 'link':
             case 'LINK_TYPE':
