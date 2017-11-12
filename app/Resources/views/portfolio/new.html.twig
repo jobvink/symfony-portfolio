@@ -1,16 +1,21 @@
-{% extends 'base.html.twig' %}
-
-{% block body %}
-    <h1>Portfolio creation</h1>
-
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <input type="submit" value="Create" />
+<div class="col-md-4 col-sm-6 portfolio-item">
+    {{ form_start(form, {'attr':{'style':'height: 100%;'}}) }}
+    <a class="portfolio-link new-image" data-toggle="modal" style="height: 64%;"
+        data-img="portfolio_icon"
+       data-input="appbundle_portfolio_image"
+       data-path="{{ path('portfolio_new') }}"
+    >
+        <div class="portfolio-hover" id="portfolio_icon">
+            <div class="portfolio-hover-content">
+                <i class="fa fa-plus fa-3x"></i>
+            </div>
+        </div>
+    </a>
+    <div class="portfolio-caption edit-caption" style="height: 36%;">
+        {{ form_row(form.title) }}
+        {{ form_row(form.subtitle) }}
+        {{ form_widget(form.image, {'attr':{'class':'hidden'}}) }}
+        <input type="submit" value="Save"/>
+    </div>
     {{ form_end(form) }}
-
-    <ul>
-        <li>
-            <a href="{{ path('portfolio_index') }}">Back to the list</a>
-        </li>
-    </ul>
-{% endblock %}
+</div>

@@ -16,9 +16,12 @@ class PortfolioType extends AbstractType
     {
         $builder->add('title')
             ->add('subtitle')
-            ->add('image', FileType::class, [
-                'label' => 'Front image van item',
-                'data_class' => null
+            ->add('image',FileType::class, [
+                'label' => false,
+                'data_class' => null,
+                'attr' => [
+                    'class' => 'hidden'
+                ]
             ]);
     }
     

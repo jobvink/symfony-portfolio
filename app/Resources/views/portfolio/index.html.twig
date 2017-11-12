@@ -10,21 +10,14 @@
                     <h3 class="section-subheading text-muted">Een overzicht van al mijn projecten.</h3>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="display: flex; flex-wrap: wrap;">
                 {% for portfolio in portfolios %}
-                <div class="col-md-4 col-sm-6 portfolio-item">
-                    <a href="#portfolioModal{{ portfolio.id }}" class="portfolio-link" data-toggle="modal">
-                        <div class="portfolio-hover">
-                            <div class="portfolio-hover-content">
-                                <i class="fa fa-plus fa-3x"></i>
-                            </div>
-                        </div>
-                        <img src="{{ asset('img/Rolling.gif') }}" data-src="{{ asset('uploads/portfolio/' ~ portfolio.image) }}" alt="{{ portfolio.title }}">
-                    </a>
-                    <h4>{{ portfolio.title }}</h4>
-                    <p class="text-muted">{{ portfolio.subtitle }}</p>
-                </div>
+                    {% include ':portfolio:show.html.twig' %}
                 {% endfor %}
+                {% if editor %}
+                {% set form = portfolioform %}
+                {% include ':portfolio:new.html.twig' %}
+                {% endif %}
             </div>
         </div>
     </section>

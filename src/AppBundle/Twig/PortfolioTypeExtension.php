@@ -21,13 +21,13 @@ class PortfolioTypeExtension extends Twig_Extension
         );
     }
 
-    public function convert($item, $type = 'RAW_TYPE', $name = '')
+    public function convert($item)
     {
-//        'raw' => 'RAW_TYPE',
-//                    'image' => 'IMAGE_TYPE',
-//                    'video' => 'VIDEO_TYPE',
-//                    'paragraph' => 'PARAGRAPH_TYPE',
-//                    'link' => 'LINK_TYPE'
+        /** @var ModalItem $item */
+        $type = $item->getType();
+        $name = $item->getName();
+        $body = $item->getBody();
+
         switch ($type) {
             case 'image':
             case 'IMAGE_TYPE':
@@ -43,7 +43,7 @@ class PortfolioTypeExtension extends Twig_Extension
                 break;
             case 'link':
             case 'LINK_TYPE':
-                $output = "<a href='$item'>$name</a>";
+                $output = "<a href='$body'>$name</a>";
                 break;
             case 'raw':
             case 'RAW_TYPE':

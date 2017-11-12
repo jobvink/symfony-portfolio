@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Competence;
+use AppBundle\Entity\Portfolio;
 use AppBundle\Entity\Timeline;
 use AppBundle\Service\Message;
 use AppBundle\Service\MessengerService;
@@ -31,6 +32,8 @@ class DefaultController extends Controller
         $competenceFormview = null;
         $timelineFormview = null;
         $portfolioModalitemForms = null;
+        $portfolioFormview = null;
+        $portfolioDeletes = null;
         if ($editor) {
             $form = CompetenceController::createNewForm($this, new Competence(), $request);
             $deletes = CompetenceController::createDeleteForms($this, $competences, $request);
@@ -39,7 +42,12 @@ class DefaultController extends Controller
             $timelineDeletes = TimelineController::createDeleteForms($this, $timelines, $request);
             $timelineFormview = $form->createView();
             $portfolioModalitemForms = ModalItemController::createAllNewForms($this, $portfolios);
+            $form = PortfolioController::createNewForm($this, new Portfolio(), $request);
+            $portfolioDeletes = PortfolioController::createDeleteForms($this, $portfolios, $request);
+            $portfolioFormview = $form->createView();
         }
+
+
 
         return $this->render(':default:portfolio.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
@@ -52,7 +60,9 @@ class DefaultController extends Controller
             'form' => $competenceFormview,
             'timelineform' => $timelineFormview,
             'timelinedeletes' => $timelineDeletes,
-            'portfolioforms' => $portfolioModalitemForms
+            'portfolioforms' => $portfolioModalitemForms,
+            'portfolioform' => $portfolioFormview,
+            'portfolioDeletes' => $portfolioDeletes,
         ]);
     }
 }

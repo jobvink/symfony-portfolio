@@ -52,7 +52,7 @@ class ModalItem implements PortfolioInterface
     /**
      * @var $portfolio
      *
-     * @ORM\ManyToOne(targetEntity="Portfolio", inversedBy="items")
+     * @ORM\ManyToOne(targetEntity="Portfolio", inversedBy="items", cascade={"remove"})
      * @ORM\JoinColumn(name="portfolio_id", referencedColumnName="id")
      */
     private $portfolio;

@@ -29,30 +29,40 @@ class PortfolioService
         $data = base64_decode($data);
         $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $name) . '.' . explode('/', $type)[1];
 
-        if (file_exists($basepath . $name)) {
-            unlink($basepath . $name);
+        try {
+            if (file_exists($basepath . $name)) {
+                unlink($basepath . $name);
+            }
+        } catch (ErrorException $exception) {
+
+        }
+
+        if (!file_exists($basepath)) {
+            mkdir($basepath, 0777, true);
         }
         // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
         file_put_contents($basepath . $fileName, $data);
 
-        $entity->setAttacement($fileName);
+        $entity->setAttachment($fileName);
     }
     
     public function storeFile(PortfolioInterface $entity, $basepath) {
         // $file slaat de geuploadde afbeelding op
         /** @var UploadedFile $file */
-        $file = $entity->getAttacement();
+        $file = $entity->getAttachment();
 
         // genereer een unique naam voor het bestand voor het opgeslagen wordt
         $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $entity->getAttachmentName()) . '.' . $file->guessExtension();
-
+        if (!file_exists($basepath)) {
+            mkdir($basepath, 0777, true);
+        }
         // Verplaats het bestand naar de map waar de afbeeldingen opgeslagen worden
         $file->move(
             $basepath,
             $fileName
         );
 
-        $entity->setAttacement($fileName);
+        $entity->setAttachment($fileName);
     }
     
 }

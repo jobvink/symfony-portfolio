@@ -42,6 +42,7 @@ $('.editable').on('click', function () {
 $('.edit-image').on('click', function () {
     var input = document.getElementById(this.dataset.input);
     var target = document.getElementById(this.dataset.img);
+    var type = this.dataset.type;
     var that = this;
     input.click();
     input.addEventListener('change', function () {
@@ -49,8 +50,9 @@ $('.edit-image').on('click', function () {
             var reader = new FileReader();
             reader.onload = function (e) {
                 $(target).attr('src', e.target.result);
-                $.post(document.getElementById(that.dataset.path).dataset.path,
-                    {'type': 'logo', 'data': e.target.result}, function (res) {
+                var url = that.dataset.path;
+                $.post(url,
+                    {'type': type, 'data': e.target.result}, function (res) {
                         console.log(res);
                     })
             };
@@ -114,14 +116,55 @@ $('.addition').on('click', 'button', function () {
     var replacement = $('.addition_' + portfolio + '_' + type);
     replacement = replacement.clone();
     replacement.addClass('holder');
-    console.log('.addition_submit_' + portfolio + '_' + type);
     $('.holder').replaceWith(replacement);
     var $input = replacement.find('.editor#' + type + '_' + portfolio);
-    console.log($input);
+    console.log('type: ', type);
+    var upload = null;
+    var name = null;
+    if (type === 'image'){
+        var image = $('.image-holder');
+        console.log('image: ', image);
+        image.on('click', function () {
+            var input = image.data('input');
+            console.log('input: ', input);
+            $input = document.getElementById(input);
+            $input.click();
+            $input.addEventListener('change', function () {
+                if ($input.files && $input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var target = image.find('.image-target');
+                        upload = e.target.result;
+                        target.replaceWith('<img class="image-target" src="'+upload+'">');
+                    };
+                    reader.readAsDataURL($input.files[0]);
+                    name = $('.image-name').val();
+                }
+            });
+        });
+    } else if (type === 'link') {
+        name = replacement.find('.addition_'+portfolio+'_input_name');
+        $input = replacement.find('.addition_'+portfolio+'_input_body');
+    } else if (type === 'video') {
+        $input = replacement.find('.addition_video_'+portfolio+'_input_body');
+        console.log($input);
+    }
     replacement.find('.addition_submit_' + portfolio + '_' + type).on('click', function () {
+        var inputval = null;
+        try {
+            inputval = $input.val()
+        } catch (e) {
+            inputval = upload
+        }
+        try {
+            name = typeof name === 'object' ? name.val() : name;
+        } catch (e){
+
+        }
+        name = name !== null ? name : portfolio + type + 'noname';
         var data = {
-            data: $input.val(),
-            name: '',
+            data: inputval,
+            name: name,
             type: type,
             portfolio: portfolio
         };
@@ -142,7 +185,7 @@ var Resolver = function (type, bag) {
         switch (type) {
             case 'paragraph':
                 this.resolvement = $('<p>');
-                this.resolvement.html(bag['html']);
+                this.resolvement.html(bag['body']);
                 this.resolvement.addClass('editable');
                 this.resolvement.attr('data-type', bag['type']);
                 this.resolvement.attr('data-path', bag['edit']);
@@ -155,13 +198,18 @@ var Resolver = function (type, bag) {
                 this.resolvement.attr('src' , '/img/Rolling.gif');
                 this.resolvement.attr('data-src', bag['base-path']+bag['data-src']);
                 this.resolvement.attr('alt',bag['name']);
+                break;
             case 'video':
-
+                this.resolvement = $('<div class="video-wrapper"><iframe width="560" height="315" src="'+bag['body']+'" frameborder="0" allowfullscreen></iframe></div>');
+                break;
             case 'link':
-
+                this.resolvement = $('<a>');
+                this.resolvement.attr('href', bag['body']);
+                this.resolvement.html(bag['name']);
+                break;
             default:
                 this.resolvement = $('<p>');
-                this.resolvement.html(bag['html']);
+                this.resolvement.html(bag['body']);
                 break;
         }
         return this.resolvement;

@@ -66,7 +66,7 @@ class Portfolio implements PortfolioInterface
     /**
      * @var ModalItem
      *
-     * @ORM\OneToMany(targetEntity="ModalItem", mappedBy="portfolio")
+     * @ORM\OneToMany(targetEntity="ModalItem", mappedBy="portfolio", cascade={"remove"})
      */
     private $items;
 

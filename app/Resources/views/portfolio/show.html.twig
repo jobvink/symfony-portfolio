@@ -1,40 +1,14 @@
-{% extends 'base.html.twig' %}
-
-{% block body %}
-    <h1>Portfolio</h1>
-
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ portfolio.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ portfolio.title }}</td>
-            </tr>
-            <tr>
-                <th>Subtitle</th>
-                <td>{{ portfolio.subtitle }}</td>
-            </tr>
-            <tr>
-                <th>Image</th>
-                <td>{{ portfolio.image }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('portfolio_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('portfolio_edit', { 'id': portfolio.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
-{% endblock %}
+<div class="col-md-4 col-sm-6 portfolio-item">
+    <a href="#portfolioModal{{ portfolio.id }}" class="portfolio-link" data-toggle="modal">
+        <div class="portfolio-hover">
+            <div class="portfolio-hover-content">
+                <i class="fa fa-plus fa-3x"></i>
+            </div>
+        </div>
+        <img src="{{ asset('img/Rolling.gif') }}" data-src="{{ asset('uploads/portfolio/' ~ portfolio.image) }}" alt="{{ portfolio.title }}">
+    </a>
+    <div class="portfolio-caption">
+        <h4>{{ portfolio.title }}</h4>
+        <p class="text-muted">{{ portfolio.subtitle }}</p>
+    </div>
+</div>

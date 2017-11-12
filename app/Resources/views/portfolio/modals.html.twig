@@ -1,32 +1,65 @@
+{% set iter = 0 %}
 {% for portfolio in portfolios %}
-<div class="portfolio-modal modal fade" id="portfolioModal{{ portfolio.id }}" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="close-modal" data-dismiss="modal">
-                <div class="lr">
-                    <div class="rl">
+    <div class="portfolio-modal modal fade" id="portfolioModal{{ portfolio.id }}" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="close-modal" data-dismiss="modal">
+                    <div class="lr">
+                        <div class="rl">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2">
-                        <div class="modal-body">
-                            <!-- Project Details Go Here -->
-                            <h2>{{ portfolio.title }}</h2>
-                            <p class="item-intro text-muted">{{ portfolio.subtitle }}</p>
-                            {% for item in portfolio.items %}
-                                {{ item|portfoliotype(item.type,item.name)|raw }}
-                            {% endfor %}
-                            <div class="holder" style="display: none"></div>
-                            <div class="addition">
-                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="image">image</button>
-                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="link">link</button>
-                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="paragraph">paragraph</button>
-                                <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}" data-portfolio="{{ portfolio.id }}" data-type="video">video</button>
-                            </div>
-                            <div class="hidden">
-                                {% include ':portfolio:addition.html.twig' %}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <div class="modal-body">
+                                <!-- Project Details Go Here -->
+                                <h2>{{ portfolio.title }}</h2>
+                                <p class="item-intro text-muted">{{ portfolio.subtitle }}</p>
+                                {% for item in portfolio.items %}
+                                    {% if item.type == 'image' %}
+                                        <span class="edit-image" {% if editor %}
+                                              data-img="image_hold_{{ portfolio.id }}"
+                                              data-input="image_modal_edit_{{ portfolio.id }}"
+                                              data-type="image"
+                                              data-path="{{ path('modalitem_edit', {'id':item.id}) }}" {% endif %}>
+                                            <img id="image_hold_{{ portfolio.id }}" src="{{ asset('img/Rolling.gif') }}"
+                                                data-src="{{ asset('uploads/portfolio/images/' ~ item.attachment) }}"
+                                                    alt="{{ item.name }}">
+                                            {% if editor %}
+                                            <input type="file" id="image_modal_edit_{{ portfolio.id }}" style="display:none;">
+                                            {% endif %}
+                                        </span>
+                                    {% else %}
+                                        {{ item|portfoliotype|raw }}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if editor %}
+                                <div class="holder" style="display: none"></div>
+                                <div class="addition">
+                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                            data-portfolio="{{ portfolio.id }}" data-type="image">image
+                                    </button>
+                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                            data-portfolio="{{ portfolio.id }}" data-type="link">link
+                                    </button>
+                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                            data-portfolio="{{ portfolio.id }}" data-type="paragraph">paragraph
+                                    </button>
+                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                            data-portfolio="{{ portfolio.id }}" data-type="video">video
+                                    </button>
+                                </div>
+                                <div class="hidden">
+                                    {% include ':portfolio:addition.html.twig' %}
+                                </div>
+                                {% set form = portfolioDeletes[iter] %}
+                                {{ form_start(form) }}
+                                {{ form_widget(form) }}
+                                <input type="submit" value="Remove">
+                                {{ form_end(form) }}
+                                {% set iter = iter+1 %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -34,5 +67,4 @@
             </div>
         </div>
     </div>
-</div>
 {% endfor %}

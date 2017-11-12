@@ -21,24 +21,6 @@ class ModalItemController extends Controller
 {
 
     const TYPES = ['RAW_TYPE','IMAGE_TYPE','VIDEO_TYPE','PARAGRAPH_TYPE','LINK_TYPE'];
-
-    /**
-     * Lists all modalItem entities.
-     *
-     * @Route("/", name="modalitem_index")
-     * @Method("GET")
-     */
-    public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $modalItems = $em->getRepository('AppBundle:ModalItem')->findAll();
-
-        return $this->render('modalitem/index.html.twig', array(
-            'modalItems' => $modalItems,
-        ));
-    }
-
     /**
      * @param Request $request
      * @param Portfolio $portfolio
@@ -90,7 +72,7 @@ class ModalItemController extends Controller
             'base-path' => $this->getParameter('image_items_directory'),
             'type' => $modalItem->getType(),
             'name' => $modalItem->getName(),
-            'html' => $modalItem->getBody(),
+            'body' => $modalItem->getBody(),
             'edit' => $this->generateUrl('modalitem_edit', ['id'=>$modalItem->getId()]),
             'delete' => $this->generateUrl('modalitem_delete' , ['id'=>$modalItem->getId()])
         ]]);
@@ -141,22 +123,6 @@ class ModalItemController extends Controller
     }
 
     /**
-     * Finds and displays a modalItem entity.
-     *
-     * @Route("/{id}", name="modalitem_show")
-     * @Method("GET")
-     */
-    public function showAction(ModalItem $modalItem)
-    {
-        $deleteForm = $this->createDeleteForm($modalItem);
-
-        return $this->render('modalitem/show.html.twig', array(
-            'modalItem' => $modalItem,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing modalItem entity.
      *
      * @Route("/{id}/edit", name="modalitem_edit")
@@ -165,10 +131,13 @@ class ModalItemController extends Controller
     public function editAction(Request $request, ModalItem $modalItem)
     {
         $type = $request->get('type');
+        $type = $type == 'logo' ? 'image' : $type;
         $data = $request->get('data');
         switch ($type) {
             case 'image':
             case 'IMAGE_TYPE':
+                $ps = $this->get('app.portfolio_service');
+                $ps->storeAjaxFile($modalItem, $data, $this->getParameter('image_items_directory'));
                 break;
             case 'video':
             case 'VIDEO_TYPE':
@@ -179,12 +148,15 @@ class ModalItemController extends Controller
                 break;
             case 'link':
             case 'LINK_TYPE':
+
                 break;
             case 'raw':
             case 'RAW_TYPE':
             default:
         }
-        $this->getDoctrine()->getManager()->flush();
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($modalItem);
+        $em->flush();
         return new JsonResponse(['succes' => true, 'request' => $request]);
     }
 
