@@ -5,8 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Competence;
 use AppBundle\Entity\Portfolio;
 use AppBundle\Entity\Timeline;
-use AppBundle\Service\Message;
-use AppBundle\Service\MessengerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -18,7 +16,7 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -41,16 +39,15 @@ class DefaultController extends Controller
             $deletes = CompetenceController::createDeleteForms($this, $competences);
             $competenceFormview = $form->createView();
             $form = TimelineController::createNewForm($this, new Timeline());
-            $timelineDeletes = TimelineController::createDeleteForms($this, $timelines, $request);
+            $timelineDeletes = TimelineController::createDeleteForms($this, $timelines);
             $timelineFormview = $form->createView();
             $portfolioModalitemForms = ModalItemController::createAllNewForms($this, $portfolios);
             $form = PortfolioController::createNewForm($this, new Portfolio());
             $portfolioDeletes = PortfolioController::createDeleteForms($this, $portfolios);
             $portfolioFormview = $form->createView();
             $modalitemRepository = $this->getDoctrine()->getRepository('AppBundle:ModalItem');
-            $modalitems = $modalitemRepository->findAll();
+            $modalitems = $modalitemRepository->findAllWithPortfolio();
             $modalitemDeletes = ModalItemController::createDeleteForms($this, $modalitems);
-
         }
 
 

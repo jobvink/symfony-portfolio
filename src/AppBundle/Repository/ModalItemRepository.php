@@ -10,4 +10,12 @@ namespace AppBundle\Repository;
  */
 class ModalItemRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findAllWithPortfolio() {
+
+        $qb = $this->createQueryBuilder('mi');
+        $qb->select('mi, portfolio');
+        $qb->leftJoin('mi.portfolio', 'portfolio');
+
+        return $qb->getQuery()->getResult();
+    }
 }

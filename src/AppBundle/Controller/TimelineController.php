@@ -188,12 +188,11 @@ class TimelineController extends Controller
      * @param Request $request
      * @return array
      */
-    public static function createDeleteForms(Controller $controller, array $timelines, Request $request)
+    public static function createDeleteForms(Controller $controller, array $timelines)
     {
         $deletes = [];
         foreach ($timelines as $t) {
             $delete = self::createDeleteForm($controller, $t);
-            $delete->handleRequest($request);
             array_push($deletes, $delete->createView());
         }
         return $deletes;
