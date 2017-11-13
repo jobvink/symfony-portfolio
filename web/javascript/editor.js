@@ -9,6 +9,7 @@ var edit = function (obj) {
         var value = $obj.html();
         $obj.unbind('keypress');
         document.removeEventListener('click', callback);
+        $obj.off('click', callback);
         $obj.attr('contenteditable', false);
         var data = {
             type: type,
@@ -41,14 +42,13 @@ $('.edit-image').on('click', function () {
     var input = document.getElementById(this.dataset.input);
     var target = document.getElementById(this.dataset.img);
     var type = this.dataset.type;
-    var that = this;
+    var url = this.dataset.path;
     input.click();
-    input.addEventListener('change', function () {
+    var upload = function () {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 $(target).attr('src', e.target.result);
-                var url = that.dataset.path;
                 $.post(url,
                     {'type': type, 'data': e.target.result}, function (res) {
                         console.log(res);
@@ -56,20 +56,17 @@ $('.edit-image').on('click', function () {
             };
             reader.readAsDataURL(input.files[0]);
         }
-    });
+        input.removeEventListener('change', upload);
+    };
+    input.addEventListener('change', upload);
 });
 
 $('.new-image').on('click', function () {
     var input = document.getElementById(this.dataset.input);
     var target = document.getElementById(this.dataset.img);
-    var that = this;
     input.click();
     input.addEventListener('change', function () {
         if (input.files && input.files[0]) {
-            target = $(target);
-            target.replaceWith('<img id="changement">');
-            target = document.getElementById('changement');
-            target.removeAttribute('id');
             var reader = new FileReader();
             reader.onload = function (e) {
                 $(target).attr('src', e.target.result);
@@ -85,7 +82,6 @@ $('.edit-dropdown').on('click', function () {
     var value = $obj.data('value');
     var time = $obj.data('time');
     var url = document.getElementById($obj.data('path')).dataset.path;
-    console.log(url);
     var data = {
         type: type,
         data: value,
@@ -118,10 +114,8 @@ $('.addition').on('click', 'button', function () {
     var name = null;
     if (type === 'image') {
         var image = $('.image-holder');
-        console.log('image: ', image);
         image.on('click', function () {
             var input = image.data('input');
-            console.log('input: ', input);
             $input = document.getElementById(input);
             $input.click();
             $input.addEventListener('change', function () {
@@ -133,7 +127,7 @@ $('.addition').on('click', 'button', function () {
                         target.replaceWith('<img class="image-target" src="' + upload + '">');
                     };
                     reader.readAsDataURL($input.files[0]);
-                    name = $('.image-name').val();
+                    nameholder = $('.image-name');
                 }
             });
         });
@@ -141,13 +135,14 @@ $('.addition').on('click', 'button', function () {
         name = replacement.find('.addition_' + portfolio + '_input_name');
         $input = replacement.find('.addition_' + portfolio + '_input_body');
     } else if (type === 'video') {
-        $input = replacement.find('addition_video_' + portfolio + '_input_body');
-        console.log($input);
+        $input = replacement.find('.addition_video_'+portfolio+'_input_body');
+        console.log($input, $input.val());
     }
-    console.log($('.addition_submit_1'));
     $('.addition_submit_' + portfolio).on('click', function () {
-        console.log('save');
         var inputval = null;
+        if (type === 'image') {
+            name = nameholder.val();
+        }
         try {
             inputval = $input.val()
         } catch (e) {
@@ -159,6 +154,7 @@ $('.addition').on('click', 'button', function () {
 
         }
         name = name !== null ? name : portfolio + type + 'noname';
+        console.log('upload: ', inputval);
         var data = {
             data: inputval,
             name: name,
@@ -186,10 +182,12 @@ var Resolver = function (type, bag) {
                 this.resolvement.addClass('editable');
                 break;
             case 'image':
+                this.resolvement =
                 this.resolvement = $('<img>');
                 this.resolvement.attr('src', '/img/Rolling.gif');
                 this.resolvement.attr('data-src', bag['base-path'] + bag['data-src']);
                 this.resolvement.attr('alt', bag['name']);
+                loadImage(this.resolvement.get(0));
                 break;
             case 'video':
                 this.resolvement = $('<div class="video-wrapper"><iframe width="560" height="315" src="' + bag['body'] + '" frameborder="0" allowfullscreen></iframe></div>');
@@ -204,8 +202,6 @@ var Resolver = function (type, bag) {
                 this.resolvement.html(bag['body']);
                 break;
         }
-        console.log(bag['type']);
-        console.log(bag['edit']);
         this.resolvement.attr('data-type', bag['type']);
         this.resolvement.attr('data-path', bag['edit']);
         this.resolvement.on('click', function () {
@@ -243,7 +239,7 @@ var replacer = function (type, portfolio) {
                 '    <input type="text" class="image-name" placeholder="Afbeeldings naam">\n' +
                 '    <button class="addition_submit_'+portfolio+'">Save</button>\n';
             break;
-        case video:
+        case 'video':
             return '</div>\n' +
                 '<div class="addition_'+portfolio+'_video">\n' +
                 '    <input type="text" class="addition_video_'+portfolio+'_input_body">\n' +

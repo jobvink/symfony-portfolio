@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Competence;
+use AppBundle\Form\CompetenceType;
 use ErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -60,13 +61,20 @@ class CompetenceController extends Controller
      */
     public function newAction(Request $request)
     {
+        $competence = new Competence();
+        $form = self::createNewForm($this, $competence, $request);
+        $form->handleRequest($request);
 
-        $form = self::createNewForm($this, new Competence(), $request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ps = $this->get('app.portfolio_service');
+            $ps->storeFile($competence, $this->getParameter('competence_logo_directory'));
 
-        return $this->render('competence/competence.html.twig', array(
-            'standalone' => true,
-            'form' => $form->createView(),
-        ));
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($competence);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('homepage');
     }
 
     /**
@@ -143,7 +151,7 @@ class CompetenceController extends Controller
             $em->flush();
         }
 
-        return $this->redirectToRoute('competence_index');
+        return $this->redirectToRoute('homepage');
     }
 
     /**
@@ -176,11 +184,6 @@ class CompetenceController extends Controller
         foreach ($competences as $c) {
             $delete = self::createDeleteForm($controller, $c);
             $delete->handleRequest($request);
-            $em = $controller->getDoctrine()->getManager();
-            if ($delete->isSubmitted() && $delete->isValid()) {
-                $em->remove($c);
-                $em->flush();
-            }
             array_push($deletes, $delete->createView());
         }
         return $deletes;
@@ -188,17 +191,12 @@ class CompetenceController extends Controller
 
     public static function createNewForm(Controller $controller, Competence $competence, Request $request)
     {
-        $form = $controller->createForm('AppBundle\Form\CompetenceType', $competence);
-        $form->handleRequest($request);
+        $form = $controller->createForm('AppBundle\Form\CompetenceType', $competence, [
+            'action' => $controller->generateUrl('competence_new'),
+            'method' => 'POST',
+        ]);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $ps = $controller->get('app.portfolio_service');
-            $ps->storeFile($competence, $controller->getParameter('competence_logo_directory'));
 
-            $em = $controller->getDoctrine()->getManager();
-            $em->persist($competence);
-            $em->flush();
-        }
 
         return $form;
     }

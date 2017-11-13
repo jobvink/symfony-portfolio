@@ -16,20 +16,22 @@
                                 <!-- Project Details Go Here -->
                                 <h2>{{ portfolio.title }}</h2>
                                 <p class="item-intro text-muted">{{ portfolio.subtitle }}</p>
+                                {% set iter = 0 %}
                                 {% for item in portfolio.items %}
                                     {% if item.type == 'image' %}
                                         <span class="edit-image" {% if editor %}
-                                              data-img="image_hold_{{ portfolio.id }}"
-                                              data-input="image_modal_edit_{{ portfolio.id }}"
+                                              data-img="image_hold_{{ portfolio.id }}_{{ iter }}"
+                                              data-input="image_modal_edit_{{ portfolio.id }}_{{ iter }}"
                                               data-type="image"
                                               data-path="{{ path('modalitem_edit', {'id':item.id}) }}" {% endif %}>
-                                            <img id="image_hold_{{ portfolio.id }}" src="{{ asset('img/Rolling.gif') }}"
+                                            <img id="image_hold_{{ portfolio.id }}_{{ iter }}" src="{{ asset('img/Rolling.gif') }}"
                                                 data-src="{{ asset('uploads/portfolio/images/' ~ item.attachment) }}"
                                                     alt="{{ item.name }}">
-                                            {% if editor %}
-                                            <input type="file" id="image_modal_edit_{{ portfolio.id }}" style="display:none;">
-                                            {% endif %}
+
                                         </span>
+                                        {% if editor %}
+                                        <input type="file" id="image_modal_edit_{{ portfolio.id }}_{{ iter }}" style="display:none;">
+                                    {% endif %}
                                     {% else %}
                                         {{ item|portfoliotype(path('modalitem_edit', {'id':item.id}))|raw }}
                                     {% endif %}

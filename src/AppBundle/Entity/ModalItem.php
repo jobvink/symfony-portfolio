@@ -192,7 +192,7 @@ class ModalItem implements PortfolioInterface
 
     public function getAttachmentName()
     {
-        return $this->getBody();
+        return $this->getName();
     }
 }
 

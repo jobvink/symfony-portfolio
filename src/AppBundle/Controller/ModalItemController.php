@@ -69,7 +69,7 @@ class ModalItemController extends Controller
 
         return new JsonResponse(['resolver' => [
             'data-src' => $modalItem->getAttachment(),
-            'base-path' => $this->getParameter('image_items_directory'),
+            'base-path' => $this->getParameter('relative_image_items_directory'),
             'type' => $modalItem->getType(),
             'name' => $modalItem->getName(),
             'body' => $modalItem->getBody(),

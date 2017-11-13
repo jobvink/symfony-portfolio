@@ -43,25 +43,18 @@ class PortfolioController extends Controller
     public function newAction(Request $request)
     {
         $portfolio = new Portfolio();
-        $form = $this->createForm('AppBundle\Form\PortfolioType', $portfolio);
+        $form = self::createNewForm($this, $portfolio);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $ps = $this->get('app.portfolio_service');
             $ps->storeFile($portfolio, $this->getParameter('portfolio_logo_directory'));
-
             $em = $this->getDoctrine()->getManager();
             $em->persist($portfolio);
             $em->flush();
-
-            return $this->redirectToRoute('portfolio_show', array('id' => $portfolio->getId()));
         }
 
-        return $this->render('portfolio/new.html.twig', array(
-            'portfolio' => $portfolio,
-            'form' => $form->createView(),
-        ));
+        return $this->redirectToRoute('homepage');
     }
 
     /**
@@ -166,17 +159,12 @@ class PortfolioController extends Controller
         return $deletes;
     }
 
-    public static function createNewForm(Controller $controller, Portfolio $portfolio, Request $request) {
-        $form = $controller->createForm('AppBundle\Form\PortfolioType', $portfolio);
-        $form->handleRequest($request);
+    public static function createNewForm(Controller $controller, Portfolio $portfolio) {
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $ps = $controller->get('app.portfolio_service');
-            $ps->storeFile($portfolio, $controller->getParameter('portfolio_logo_directory'));
-            $em = $controller->getDoctrine()->getManager();
-            $em->persist($portfolio);
-            $em->flush();
-        }
+        $form = $controller->createForm('AppBundle\Form\PortfolioType', $portfolio, [
+            'action' => $controller->generateUrl('portfolio_new'),
+            'method' => 'POST'
+        ]);
 
         return $form;
 

@@ -33,7 +33,7 @@ class TimelineController extends Controller
         $timelines = $em->getRepository('AppBundle:Timeline')->findAll();
         $timelineDeletes = TimelineController::createDeleteForms($this, $timelines, $request);
 
-        $form = self::createNewForm($this, new Timeline(), $request);
+        $form = self::createNewForm($this, new Timeline());
 
         return $this->render('timeline/index.html.twig', array(
             'timelines' => $timelines,
@@ -48,19 +48,24 @@ class TimelineController extends Controller
      * Creates a new timeline entity.
      *
      * @Route("/new", name="timeline_new")
-     * @Method({"GET", "POST"})
+     * @Method("POST")
      */
     public function newAction(Request $request)
     {
         $timeline = new Timeline();
-        $form = self::createDeleteForm($this, $timeline);
+        $form = self::createNewForm($this, $timeline);
 
-        return $this->render('timeline/timeline.html.twig', array(
-            'timeline' => $timeline,
-            'form' => $form->createView(),
-            'editor' => true,
-            'standalone' => true
-        ));
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ps = $this->get('app.portfolio_service');
+            $ps->storeFile($timeline, $this->getParameter('timeline_logo_directory'));
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($timeline);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('homepage');
     }
 
     /**
@@ -156,7 +161,7 @@ class TimelineController extends Controller
             $em->flush();
         }
 
-        return $this->redirectToRoute('timeline_index');
+        return $this->redirectToRoute('homepage');
     }
 
     /**
@@ -189,28 +194,18 @@ class TimelineController extends Controller
         foreach ($timelines as $t) {
             $delete = self::createDeleteForm($controller, $t);
             $delete->handleRequest($request);
-            $em = $controller->getDoctrine()->getManager();
-            if ($delete->isSubmitted() && $delete->isValid()) {
-                $em->remove($t);
-                $em->flush();
-            }
             array_push($deletes, $delete->createView());
         }
         return $deletes;
     }
 
-    public static function createNewForm(Controller $controller, Timeline $timeline, Request $request)
+    public static function createNewForm(Controller $controller, Timeline $timeline)
     {
-        $form = $controller->createForm('AppBundle\Form\TimelineType', $timeline);
-        $form->handleRequest($request);
+        $form = $controller->createForm('AppBundle\Form\TimelineType', $timeline, [
+            'action' => $controller->generateUrl('timeline_new'),
+            'method' => 'POST'
+        ]);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $ps = $controller->get('app.portfolio_service');
-            $ps->storeFile($timeline, $controller->getParameter('timeline_logo_directory'));
-            $em = $controller->getDoctrine()->getManager();
-            $em->persist($timeline);
-            $em->flush();
-        }
 
         return $form;
     }
