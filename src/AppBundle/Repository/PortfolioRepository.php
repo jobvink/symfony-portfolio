@@ -10,4 +10,14 @@ namespace AppBundle\Repository;
  */
 class PortfolioRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function findAllWithItems() {
+
+        $qb = $this->createQueryBuilder('p');
+        $qb->select('p, items');
+        $qb->leftJoin('p.items', 'items');
+
+        return $qb->getQuery()->getResult();
+    }
+
 }

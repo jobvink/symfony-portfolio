@@ -143,17 +143,11 @@ class PortfolioController extends Controller
      * @return array
      * @internal param array $portfolios
      */
-    public static function createDeleteForms(Controller $controller, array $portfolios, Request $request)
+    public static function createDeleteForms(Controller $controller, array $portfolios)
     {
         $deletes = [];
         foreach ($portfolios as $p) {
             $delete = self::createDeleteForm($controller, $p);
-            $delete->handleRequest($request);
-            $em = $controller->getDoctrine()->getManager();
-            if ($delete->isSubmitted() && $delete->isValid()) {
-                $em->remove($p);
-                $em->flush();
-            }
             array_push($deletes, $delete->createView());
         }
         return $deletes;

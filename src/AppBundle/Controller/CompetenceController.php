@@ -178,18 +178,17 @@ class CompetenceController extends Controller
      * @param Request $request
      * @return array
      */
-    public static function createDeleteForms(Controller $controller, array $competences, Request $request)
+    public static function createDeleteForms(Controller $controller, array $competences)
     {
         $deletes = [];
         foreach ($competences as $c) {
             $delete = self::createDeleteForm($controller, $c);
-            $delete->handleRequest($request);
             array_push($deletes, $delete->createView());
         }
         return $deletes;
     }
 
-    public static function createNewForm(Controller $controller, Competence $competence, Request $request)
+    public static function createNewForm(Controller $controller, Competence $competence)
     {
         $form = $controller->createForm('AppBundle\Form\CompetenceType', $competence, [
             'action' => $controller->generateUrl('competence_new'),

@@ -23,10 +23,11 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $timelines = $em->getRepository('AppBundle:Timeline')->findAll();
-        $portfolios = $em->getRepository('AppBundle:Portfolio')->findAll();
+        $portfolios = $em->getRepository('AppBundle:Portfolio')->findAllWithItems();
         $competences = $em->getRepository('AppBundle:Competence')->findAll();
 
         $editor = $this->isGranted('ROLE_ADMIN');
+
         $deletes = null;
         $timelineDeletes = null;
         $competenceFormview = null;
@@ -34,17 +35,22 @@ class DefaultController extends Controller
         $portfolioModalitemForms = null;
         $portfolioFormview = null;
         $portfolioDeletes = null;
+        $modalitemDeletes = null;
         if ($editor) {
-            $form = CompetenceController::createNewForm($this, new Competence(), $request);
-            $deletes = CompetenceController::createDeleteForms($this, $competences, $request);
+            $form = CompetenceController::createNewForm($this, new Competence());
+            $deletes = CompetenceController::createDeleteForms($this, $competences);
             $competenceFormview = $form->createView();
-            $form = TimelineController::createNewForm($this, new Timeline(), $request);
+            $form = TimelineController::createNewForm($this, new Timeline());
             $timelineDeletes = TimelineController::createDeleteForms($this, $timelines, $request);
             $timelineFormview = $form->createView();
             $portfolioModalitemForms = ModalItemController::createAllNewForms($this, $portfolios);
-            $form = PortfolioController::createNewForm($this, new Portfolio(), $request);
-            $portfolioDeletes = PortfolioController::createDeleteForms($this, $portfolios, $request);
+            $form = PortfolioController::createNewForm($this, new Portfolio());
+            $portfolioDeletes = PortfolioController::createDeleteForms($this, $portfolios);
             $portfolioFormview = $form->createView();
+            $modalitemRepository = $this->getDoctrine()->getRepository('AppBundle:ModalItem');
+            $modalitems = $modalitemRepository->findAll();
+            $modalitemDeletes = ModalItemController::createDeleteForms($this, $modalitems);
+
         }
 
 
@@ -63,6 +69,7 @@ class DefaultController extends Controller
             'portfolioforms' => $portfolioModalitemForms,
             'portfolioform' => $portfolioFormview,
             'portfolioDeletes' => $portfolioDeletes,
+            'modalitemDeletes' => $modalitemDeletes
         ]);
     }
 }

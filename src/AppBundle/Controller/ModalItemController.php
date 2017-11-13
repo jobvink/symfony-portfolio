@@ -168,7 +168,7 @@ class ModalItemController extends Controller
      */
     public function deleteAction(Request $request, ModalItem $modalItem)
     {
-        $form = $this->createDeleteForm($modalItem);
+        $form = self::createDeleteForm($this, $modalItem);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -177,23 +177,7 @@ class ModalItemController extends Controller
             $em->flush();
         }
 
-        return $this->redirectToRoute('modalitem_index');
-    }
-
-    /**
-     * Creates a form to delete a modalItem entity.
-     *
-     * @param ModalItem $modalItem The modalItem entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(ModalItem $modalItem)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('modalitem_delete', array('id' => $modalItem->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
+        return $this->redirectToRoute('homepage');
     }
 
     public static function newFormInstance(Controller $controller, Portfolio $portfolio) {
@@ -219,5 +203,39 @@ class ModalItemController extends Controller
             $forms[$portfolio->getId()] = self::newFormInstance($controller, $portfolio);
         }
         return $forms;
+    }
+
+    /**
+     * Creates a form to delete a competence entity.
+     *
+     * @param Controller $controller
+     * @param Portfolio $modalItem
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private static function createDeleteForm(Controller $controller, ModalItem $modalItem)
+    {
+        return $controller->createFormBuilder()
+            ->setAction($controller->generateUrl('modalitem_delete', ['id' => $modalItem->getId()]))
+            ->setMethod('DELETE')
+            ->getForm();
+    }
+
+    /**
+     * @param Controller $controller
+     * @param array $modalItems
+     * @param Request $request
+     * @return array
+     * @internal param array $portfolios
+     */
+    public static function createDeleteForms(Controller $controller, array $modalItems)
+    {
+        $deletes = [];
+        foreach ($modalItems as $m) {
+            /** @var ModalItem $m */
+            $delete = self::createDeleteForm($controller, $m);
+            $id = $m->getId();
+            $deletes[$id] = $delete->createView();
+        }
+        return $deletes;
     }
 }

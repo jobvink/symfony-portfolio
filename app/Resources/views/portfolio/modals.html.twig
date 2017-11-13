@@ -20,47 +20,57 @@
                                 {% for item in portfolio.items %}
                                     {% if item.type == 'image' %}
                                         <span class="edit-image" {% if editor %}
-                                              data-img="image_hold_{{ portfolio.id }}_{{ iter }}"
-                                              data-input="image_modal_edit_{{ portfolio.id }}_{{ iter }}"
-                                              data-type="image"
-                                              data-path="{{ path('modalitem_edit', {'id':item.id}) }}" {% endif %}>
-                                            <img id="image_hold_{{ portfolio.id }}_{{ iter }}" src="{{ asset('img/Rolling.gif') }}"
-                                                data-src="{{ asset('uploads/portfolio/images/' ~ item.attachment) }}"
-                                                    alt="{{ item.name }}">
+                                            data-img="image_hold_{{ portfolio.id }}_{{ iter }}"
+                                            data-input="image_modal_edit_{{ portfolio.id }}_{{ iter }}"
+                                            data-type="image"
+                                            data-path="{{ path('modalitem_edit', {'id':item.id}) }}" {% endif %}>
+                                            <img id="image_hold_{{ portfolio.id }}_{{ iter }}"
+                                                 src="{{ asset('img/Rolling.gif') }}"
+                                                 data-src="{{ asset('uploads/portfolio/images/' ~ item.attachment) }}"
+                                                 alt="{{ item.name }}">
 
                                         </span>
                                         {% if editor %}
-                                        <input type="file" id="image_modal_edit_{{ portfolio.id }}_{{ iter }}" style="display:none;">
-                                    {% endif %}
+                                            {% set delete = modalitemDeletes[item.id] %}
+                                            {{ form_start(delete) }}<input type="submit"
+                                                                           value="Remove">{{ form_end(delete) }}
+                                            <input type="file" id="image_modal_edit_{{ portfolio.id }}_{{ iter }}"
+                                                   style="display:none;">
+                                        {% endif %}
                                     {% else %}
                                         {{ item|portfoliotype(path('modalitem_edit', {'id':item.id}))|raw }}
+                                        {% if editor %}
+                                            {% set delete = modalitemDeletes[item.id] %}
+                                            {{ form_start(delete) }}<input type="submit"
+                                                                           value="Remove">{{ form_end(delete) }}
+                                        {% endif %}
                                     {% endif %}
                                 {% endfor %}
                                 {% if editor %}
-                                <div class="holder_{{ portfolio.id }}" style="display: none"></div>
-                                <div class="addition addition_{{ portfolio.id }}">
-                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
-                                            data-portfolio="{{ portfolio.id }}" data-type="image">image
-                                    </button>
-                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
-                                            data-portfolio="{{ portfolio.id }}" data-type="link">link
-                                    </button>
-                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
-                                            data-portfolio="{{ portfolio.id }}" data-type="paragraph">paragraph
-                                    </button>
-                                    <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
-                                            data-portfolio="{{ portfolio.id }}" data-type="video">video
-                                    </button>
-                                </div>
-                                <div class="hidden">
-                                    {% include ':portfolio:addition.html.twig' %}
-                                </div>
-                                {% set form = portfolioDeletes[iter] %}
-                                {{ form_start(form) }}
-                                {{ form_widget(form) }}
-                                <input type="submit" value="Remove">
-                                {{ form_end(form) }}
-                                {% set iter = iter+1 %}
+                                    <div class="holder_{{ portfolio.id }}" style="display: none"></div>
+                                    <div class="addition addition_{{ portfolio.id }}">
+                                        <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                                data-portfolio="{{ portfolio.id }}" data-type="image">image
+                                        </button>
+                                        <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                                data-portfolio="{{ portfolio.id }}" data-type="link">link
+                                        </button>
+                                        <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                                data-portfolio="{{ portfolio.id }}" data-type="paragraph">paragraph
+                                        </button>
+                                        <button data-path="{{ path('modalitem_portfolio_new', {'id':portfolio.id}) }}"
+                                                data-portfolio="{{ portfolio.id }}" data-type="video">video
+                                        </button>
+                                    </div>
+                                    <div class="hidden">
+                                        {% include ':portfolio:addition.html.twig' %}
+                                    </div>
+                                    {% set form = portfolioDeletes[iter] %}
+                                    {{ form_start(form) }}
+                                    {{ form_widget(form) }}
+                                    <input type="submit" value="Remove">
+                                    {{ form_end(form) }}
+                                    {% set iter = iter+1 %}
                                 {% endif %}
                             </div>
                         </div>
